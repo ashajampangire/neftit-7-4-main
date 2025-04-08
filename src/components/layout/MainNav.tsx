@@ -14,7 +14,11 @@ import confetti from "canvas-confetti";
 import classNames from "classnames";
 import { motion, AnimatePresence } from "framer-motion";
 
-export function MainNav() {
+interface MainNavProps {
+  children: React.ReactNode;
+}
+
+export function MainNav({ children }: MainNavProps) {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [claimed, setClaimed] = useState(false);
@@ -243,116 +247,121 @@ export function MainNav() {
   );
 
   return (
-    <nav className={classNames(
-      "fixed top-0 w-full z-50 bg-black/20 backdrop-blur-xl border-b border-white/10",
-      "transition-colors duration-200",
-    )}>
-      <div className="container h-[72px] flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <Link 
-            to="/" 
-            className="text-xl sm:text-2xl font-light tracking-wider text-white hover:text-white/90 transition-colors"
-          >
-            <span className="text-2xl font-bold text-white">
-              NEFT<span className="text-neon-blue">IT</span>
-            </span>
-          </Link>
-          
-          {!isMobile && (
-            <div className="flex items-center gap-6">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link 
-                    to="/discover" 
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Discover
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>Explore NFT collections</TooltipContent>
-              </Tooltip>
+    <div>
+      <nav className={classNames(
+        "fixed top-0 w-full z-50 bg-black/20 backdrop-blur-xl border-b border-white/10",
+        "transition-colors duration-200",
+      )}>
+        <div className="container h-[72px] flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <Link 
+              to="/" 
+              className="text-xl sm:text-2xl font-light tracking-wider text-white hover:text-white/90 transition-colors"
+            >
+              <span className="text-2xl font-bold text-white">
+                NEFT<span className="text-neon-blue">IT</span>
+              </span>
+            </Link>
+            
+            {!isMobile && (
+              <div className="flex items-center gap-6">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link 
+                      to="/discover" 
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Discover
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>Explore NFT collections</TooltipContent>
+                </Tooltip>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link 
-                    to="/burn" 
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Burn
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>Burn & upgrade your NFTs</TooltipContent>
-              </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link 
+                      to="/burn" 
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Burn
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>Burn & upgrade your NFTs</TooltipContent>
+                </Tooltip>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link 
-                    to="/stake" 
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Stake
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>Stake NFTs & tokens to earn rewards</TooltipContent>
-              </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link 
+                      to="/stake" 
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Stake
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>Stake NFTs & tokens to earn rewards</TooltipContent>
+                </Tooltip>
 
-              <StreakButton />
-            </div>
-          )}
-        </div>
-        
-        <div className="flex items-center gap-4">
-          {/* Combined NEFT and XP counter */}
-          <div className="hidden sm:flex items-center divide-x divide-white/10 rounded-lg bg-gradient-to-r from-white/5 to-white/[0.07] border border-white/10 backdrop-blur-sm">
-            <div className="px-4 py-1.5 flex items-center gap-1.5">
-              <span className="text-sm font-medium bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{neftBalance} NEFT</span>
-            </div>
-            <div className="px-4 py-1.5 flex items-center gap-1.5">
-              <span className="text-sm font-medium bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{xpPoints} XP</span>
-            </div>
+                <StreakButton />
+              </div>
+            )}
           </div>
+          
+          <div className="flex items-center gap-4">
+            {/* Combined NEFT and XP counter */}
+            <div className="hidden sm:flex items-center divide-x divide-white/10 rounded-lg bg-gradient-to-r from-white/5 to-white/[0.07] border border-white/10 backdrop-blur-sm">
+              <div className="px-4 py-1.5 flex items-center gap-1.5">
+                <span className="text-sm font-medium bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{neftBalance} NEFT</span>
+              </div>
+              <div className="px-4 py-1.5 flex items-center gap-1.5">
+                <span className="text-sm font-medium bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{xpPoints} XP</span>
+              </div>
+            </div>
 
-          {isMobile ? (
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="text-white"
+            {isMobile ? (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="text-white"
+                  >
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent 
+                  side="right" 
+                  className="w-80 bg-[#0A0A0F] border-white/10 p-0 overflow-y-auto"
                 >
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent 
-                side="right" 
-                className="w-80 bg-[#0A0A0F] border-white/10 p-0 overflow-y-auto"
-              >
-                <ProfileBox className="border-b border-white/10" />
-                <div className="py-2">
-                  <NavigationItems />
-                </div>
-              </SheetContent>
-            </Sheet>
-          ) : (
-            <Sheet>
-              <SheetTrigger asChild>
-                <div className="animate-scale-in">
-                  <ProfileButton />
-                </div>
-              </SheetTrigger>
-              <SheetContent 
-                side="right" 
-                className="w-[300px] bg-[#0A0A0F] border-white/10 p-0 overflow-y-auto"
-              >
-                <ProfileBox className="border-b border-white/10" />
-                <div className="py-2">
-                  <NavigationItems />
-                </div>
-              </SheetContent>
-            </Sheet>
-          )}
+                  <ProfileBox className="border-b border-white/10" />
+                  <div className="py-2">
+                    <NavigationItems />
+                  </div>
+                </SheetContent>
+              </Sheet>
+            ) : (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="animate-scale-in">
+                    <ProfileButton />
+                  </div>
+                </SheetTrigger>
+                <SheetContent 
+                  side="right" 
+                  className="w-[300px] bg-[#0A0A0F] border-white/10 p-0 overflow-y-auto"
+                >
+                  <ProfileBox className="border-b border-white/10" />
+                  <div className="py-2">
+                    <NavigationItems />
+                  </div>
+                </SheetContent>
+              </Sheet>
+            )}
+          </div>
         </div>
+      </nav>
+      <div className="pt-[72px]">
+        {children}
       </div>
-    </nav>
+    </div>
   );
 }
