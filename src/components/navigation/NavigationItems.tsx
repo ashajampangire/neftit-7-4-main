@@ -10,6 +10,7 @@ import {
   Trophy,
   Info,
   ChevronRight,
+  Flame,
 } from "lucide-react";
 import { useReferral } from "@/hooks/useReferral";
 import ReferralModal from "@/components/referral/ReferralModal";
@@ -42,6 +43,13 @@ export const navigationItems: NavigationItemType[] = [
     description: "Track your progress",
     badge: "3",
     color: "from-purple-500/20 to-purple-600/20",
+  },
+  {
+    name: "Stake",
+    icon: <Flame size={20} />,
+    path: "/stake",
+    description: "Stake NFTs & tokens to earn rewards",
+    color: "from-green-500/20 to-green-600/20",
   },
   {
     name: "Refer and Earn",

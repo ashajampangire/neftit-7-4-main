@@ -25,91 +25,93 @@ const Discover = () => {
     navigate(`/project/${projectId}`);
   };
 
+  const projectImg = "/images/system-activation.png";
+
   const projects: Project[] = [
     {
       id: 1,
-      title: "Quantum Nexus",
-      collection: "Cyber Collective",
-      image: "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?w=400&h=300&fit=crop",
-      reward: "50 NEFT",
-      xp: "+75 XP",
+      title: "System Activation Protocol",
+      collection: "NEFTIT Genesis",
+      image: projectImg,
+      reward: "100 NEFT",
+      xp: "+150 XP",
       spots: "1000 spots",
       deadline: "2024-04-15T00:00:00Z",
       category: "featured"
     },
     {
       id: 2,
-      title: "Neo Protocol",
+      title: "Neo Protocol Initiative",
       collection: "Digital Frontiers",
-      image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400&h=300&fit=crop",
-      reward: "35 NEFT",
-      xp: "+45 XP",
+      image: projectImg,
+      reward: "85 NEFT",
+      xp: "+120 XP",
       spots: "800 spots",
       deadline: "2024-04-10T00:00:00Z",
       category: "high-rewards"
     },
     {
       id: 3,
-      title: "Cyber Sentinel",
+      title: "Cyber Sentinel Program",
       collection: "MetaGuardians",
-      image: "https://images.unsplash.com/photo-1515378960530-7c0da6231311?w=400&h=300&fit=crop",
-      reward: "40 NEFT",
-      xp: "+60 XP",
+      image: projectImg,
+      reward: "90 NEFT",
+      xp: "+130 XP",
       spots: "500 spots",
       deadline: "2024-04-05T00:00:00Z",
       category: "ending-soon"
     },
     {
       id: 4,
-      title: "Digital Horizon",
+      title: "Digital Horizon Protocol",
       collection: "Future Realms",
-      image: "https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?w=400&h=300&fit=crop",
-      reward: "45 NEFT",
-      xp: "+55 XP",
+      image: projectImg,
+      reward: "95 NEFT",
+      xp: "+140 XP",
       spots: "750 spots",
       deadline: "2024-04-20T00:00:00Z",
       category: "featured"
     },
     {
       id: 5,
-      title: "MetaVerse Pioneer",
+      title: "MetaVerse Initialization",
       collection: "Virtual Frontiers",
-      image: "https://images.unsplash.com/photo-1614729939124-123d0b8ae4b8?w=400&h=300&fit=crop",
-      reward: "60 NEFT",
-      xp: "+80 XP",
+      image: projectImg,
+      reward: "110 NEFT",
+      xp: "+160 XP",
       spots: "300 spots",
       deadline: "2024-04-08T00:00:00Z",
       category: "ending-soon"
     },
     {
       id: 6,
-      title: "Blockchain Genesis",
+      title: "Blockchain Genesis Protocol",
       collection: "CryptoVanguard",
-      image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=300&fit=crop",
-      reward: "55 NEFT",
-      xp: "+70 XP",
+      image: projectImg,
+      reward: "105 NEFT",
+      xp: "+155 XP",
       spots: "600 spots",
       deadline: "2024-04-25T00:00:00Z",
       category: "high-rewards"
     },
     {
       id: 7,
-      title: "Neural Network",
+      title: "Neural Network Activation",
       collection: "AI Collective",
-      image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop",
-      reward: "42 NEFT",
-      xp: "+65 XP",
+      image: projectImg,
+      reward: "92 NEFT",
+      xp: "+135 XP",
       spots: "400 spots",
       deadline: "2024-04-12T00:00:00Z",
       category: "featured"
     },
     {
       id: 8,
-      title: "Quantum Leap",
+      title: "Quantum Protocol",
       collection: "Tech Innovators",
-      image: "https://images.unsplash.com/photo-1511376777868-611b54f68947?w=400&h=300&fit=crop",
-      reward: "38 NEFT",
-      xp: "+50 XP",
+      image: projectImg,
+      reward: "88 NEFT",
+      xp: "+125 XP",
       spots: "900 spots",
       deadline: "2024-04-18T00:00:00Z",
       category: "all"
@@ -212,33 +214,44 @@ const Discover = () => {
           {filteredProjects.map((project) => (
             <div 
               key={project.id} 
-              className="group bg-[#1A1B1F] rounded-2xl overflow-hidden border border-gray-800 hover:border-[#00E5FF] transition-all duration-300 transform hover:-translate-y-2"
+              className={`group bg-[#1A1B1F] rounded-2xl overflow-hidden border ${project.category === "featured" ? "border-[#00E5FF]" : "border-[#1db35b]"} transition-all duration-300`}
             >
               <div className="relative overflow-hidden cursor-pointer" onClick={() => handleProjectClick(project.id)}>
-                <img 
-                  src={project.image} 
-                  alt={project.title} 
-                  className="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                {project.category === "featured" && (
-                  <div className="absolute top-3 right-3 bg-[#00E5FF] text-black text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1">
-                    <Star size={12} />
-                    Featured
-                  </div>
-                )}
-                {project.category === "ending-soon" && (
-                  <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1">
-                    <Timer size={12} />
-                    Ending Soon
-                  </div>
-                )}
-                <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center">
-                  <div className="flex items-center gap-2 bg-black/60 rounded-lg px-2 py-1">
+                <div className="relative w-full h-[180px] bg-[#0A0B0F]">
+                  {/* Main system activation image */}
+                  <img 
+                    src={projectImg} 
+                    alt={project.title} 
+                    className="w-full h-full object-contain" 
+                  />
+
+                  {/* Green border glow */}
+                  <div className="absolute inset-x-0 top-0 h-[1px] bg-[#1db35b]/50" />
+                  <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[#1db35b]/50" />
+                  <div className="absolute inset-y-0 left-0 w-[1px] bg-[#1db35b]/50" />
+                  <div className="absolute inset-y-0 right-0 w-[1px] bg-[#1db35b]/50" />
+
+                  {project.category === "featured" && (
+                    <div className="absolute top-4 right-4 bg-[#00E5FF] text-black text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                      <Star size={12} />
+                      Featured
+                    </div>
+                  )}
+                  {project.category === "ending-soon" && (
+                    <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                      <Timer size={12} />
+                      Ending Soon
+                    </div>
+                  )}
+                </div>
+
+                {/* Stats container below image */}
+                <div className="flex justify-between items-center px-4 py-2 bg-[#1A1B1F]">
+                  <div className="flex items-center gap-2">
                     <Users size={14} className="text-gray-400" />
                     <span className="text-xs text-gray-300">{project.spots}</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-black/60 rounded-lg px-2 py-1">
+                  <div className="flex items-center gap-2">
                     <Clock size={14} className="text-gray-400" />
                     <span className="text-xs text-gray-300">
                       {new Date(project.deadline).toLocaleDateString()}
@@ -248,19 +261,17 @@ const Discover = () => {
               </div>
               
               <div className="p-4">
-                <div className="mb-3">
-                  <h3 className="text-base font-semibold group-hover:text-[#00E5FF] transition-colors">
+                <div className="mb-2">
+                  <h3 className="text-base font-medium text-white">
                     {project.title}
                   </h3>
-                  <p className="text-xs text-gray-400">{project.collection}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{project.collection}</p>
                 </div>
                 
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="text-[#00E5FF] text-sm font-medium">{project.reward}</div>
-                    <div className="text-gray-400 text-xs">•</div>
-                    <div className="text-gray-300 text-sm">{project.xp}</div>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <div className="text-[#00E5FF] text-sm font-medium">{project.reward}</div>
+                  <div className="text-gray-500 text-xs">•</div>
+                  <div className="text-gray-300 text-sm">{project.xp}</div>
                 </div>
               </div>
             </div>

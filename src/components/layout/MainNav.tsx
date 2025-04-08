@@ -284,6 +284,18 @@ export function MainNav() {
                 <TooltipContent>Burn & upgrade your NFTs</TooltipContent>
               </Tooltip>
 
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link 
+                    to="/stake" 
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Stake
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>Stake NFTs & tokens to earn rewards</TooltipContent>
+              </Tooltip>
+
               <StreakButton />
             </div>
           )}
