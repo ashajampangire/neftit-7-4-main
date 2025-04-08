@@ -13,7 +13,7 @@ import Streaks from "./pages/Streaks";
 import NotFound from "./pages/NotFound";
 import ProjectDetails from "./pages/ProjectDetails";
 import SavedNFTs from "./pages/SavedNFTs";
-import Activity from "./pages/Activity";
+import ActivityLog from "./pages/ActivityLog";
 import Settings from "./pages/Settings";
 import BurnPage from "./pages/Burn";
 import Landing from "./pages/Landing";
@@ -22,6 +22,7 @@ import Leaderboard from "./pages/Leaderboard";
 import HowItWorks from "./pages/HowItWorks";
 import { useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
+import StakingPage from "./pages/Staking";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => {
                 <Route path="/home" element={<PrivateRoute><Index /></PrivateRoute>} />
                 <Route path="/discover" element={<PrivateRoute><Discover /></PrivateRoute>} />
                 <Route path="/burn" element={<PrivateRoute><BurnPage /></PrivateRoute>} />
+                <Route path="/stake" element={<PrivateRoute><StakingPage /></PrivateRoute>} />
                 <Route path="/project/:id" element={<PrivateRoute><ProjectDetails /></PrivateRoute>} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
@@ -67,7 +69,7 @@ const App = () => {
                 <Route path="/streaks" element={<PrivateRoute><Streaks /></PrivateRoute>} />
                 <Route path="/saved" element={<PrivateRoute><SavedNFTs /></PrivateRoute>} />
                 <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
-                <Route path="/activity" element={<PrivateRoute><Activity /></PrivateRoute>} />
+                <Route path="/activity" element={<PrivateRoute><ActivityLog /></PrivateRoute>} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
                 <Route path="/achievements" element={<PrivateRoute><Achievements /></PrivateRoute>} />
                 <Route path="*" element={<NotFound />} />
