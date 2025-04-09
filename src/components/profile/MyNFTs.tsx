@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Award, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 const nftData = [
   {
@@ -35,10 +35,10 @@ const nftData = [
 ];
 
 const rarityColors = {
-  'Common': 'border-neftit-common bg-neftit-common/20',
-  'Platinum': 'border-neftit-platinum bg-neftit-platinum/20',
-  'Silver': 'border-neftit-silver bg-neftit-silver/20',
-  'Gold': 'border-neftit-gold bg-neftit-gold/20'
+  'Common': 'border-[#36F9F6] bg-[#36F9F6]/10 text-[#36F9F6]',
+  'Platinum': 'border-[#FF2E63] bg-[#FF2E63]/10 text-[#FF2E63]',
+  'Silver': 'border-[#9D9BF3] bg-[#9D9BF3]/10 text-[#9D9BF3]',
+  'Gold': 'border-[#FFD700] bg-[#FFD700]/10 text-[#FFD700]'
 };
 
 const NFTCard = ({ nft }: { nft: typeof nftData[0] }) => {
@@ -48,12 +48,15 @@ const NFTCard = ({ nft }: { nft: typeof nftData[0] }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="glass-morphism rounded-2xl flex flex-col items-center justify-center h-96 border border-dashed border-white/20 hover:border-neftit-purple/50 transition-all cursor-pointer group"
+        className="relative overflow-hidden rounded-2xl bg-background-card border border-dashed border-border hover:border-primary/50 transition-all cursor-pointer group backdrop-blur-xl"
       >
-        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-neftit-purple/20 transition-all">
-          <Plus className="w-8 h-8 text-white/50 group-hover:text-neftit-purple transition-all" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+        <div className="h-96 flex flex-col items-center justify-center relative">
+          <div className="w-16 h-16 rounded-full bg-background-card flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all border border-border group-hover:border-primary/50">
+            <Plus className="w-8 h-8 text-text-secondary group-hover:text-primary transition-all" />
+          </div>
+          <p className="text-text-secondary group-hover:text-text-primary font-manrope transition-all">Add New NFT</p>
         </div>
-        <p className="text-white/50 group-hover:text-white transition-all">Add New NFT</p>
       </motion.div>
     );
   }
@@ -63,17 +66,27 @@ const NFTCard = ({ nft }: { nft: typeof nftData[0] }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="glass-morphism rounded-2xl overflow-hidden hover:shadow-xl transition-all hover:translate-y-[-5px]"
+      className="relative overflow-hidden rounded-2xl bg-background-card border border-border hover:border-border-hover transition-all group backdrop-blur-xl"
     >
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
       <div className="relative h-64">
-        <img src={nft.image} alt={nft.name} className="w-full h-full object-cover" />
-        <div className={`absolute top-3 right-3 px-2 py-1 rounded-md text-xs font-medium ${rarityColors[nft.rarity as keyof typeof rarityColors]}`}>
+        <img 
+          src={nft.image} 
+          alt={nft.name} 
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+        />
+        <div className={cn(
+          'absolute top-3 right-3 px-3 py-1.5 rounded-lg text-xs font-medium border',
+          rarityColors[nft.rarity as keyof typeof rarityColors]
+        )}>
           {nft.rarity}
         </div>
       </div>
-      <div className="p-4">
-        <h3 className="text-lg font-medium text-white mb-1">{nft.name}</h3>
-        <p className="text-sm text-gray-400">{nft.project}</p>
+      <div className="relative p-5 space-y-2">
+        <h3 className="text-lg font-bold text-text-primary font-space-grotesk group-hover:text-primary transition-colors">
+          {nft.name}
+        </h3>
+        <p className="text-sm text-text-secondary font-dm-sans">{nft.project}</p>
       </div>
     </motion.div>
   );
@@ -82,23 +95,42 @@ const NFTCard = ({ nft }: { nft: typeof nftData[0] }) => {
 const MyNFTs = () => {
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-white">My NFT Collection</h2>
-        <button className="text-sm text-neftit-purple hover:text-neftit-indigo transition-colors">View All</button>
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-2xl font-bold text-text-primary font-space-grotesk">
+          My NFT Collection
+        </h2>
+        <button className="px-4 py-2 rounded-lg text-sm font-medium text-primary hover:bg-primary/10 transition-colors font-manrope">
+          View All
+        </button>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {nftData.map(nft => (
-          <NFTCard key={nft.id} nft={nft} />
+        {nftData.map((nft, index) => (
+          <motion.div
+            key={nft.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <NFTCard nft={nft} />
+          </motion.div>
         ))}
       </div>
       
       {nftData.length === 0 && (
-        <div className="glass-morphism rounded-2xl p-10 text-center">
-          <Award className="h-16 w-16 text-neftit-purple/40 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-white mb-2">No NFTs Yet</h3>
-          <p className="text-white/60">Complete quests to earn your first NFT!</p>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl p-10 text-center bg-background-card backdrop-blur-xl border border-border"
+        >
+          <Award className="h-16 w-16 text-primary/40 mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-text-primary font-space-grotesk mb-2">
+            No NFTs Yet
+          </h3>
+          <p className="text-text-secondary font-dm-sans">
+            Complete quests to earn your first NFT!
+          </p>
+        </motion.div>
       )}
     </div>
   );

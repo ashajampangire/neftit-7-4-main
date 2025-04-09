@@ -20,6 +20,7 @@ import Landing from "./pages/Landing";
 import Achievements from "./pages/Achievements";
 import Leaderboard from "./pages/Leaderboard";
 import HowItWorks from "./pages/HowItWorks";
+import DailyClaim from "./pages/DailyClaim";
 import { useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import StakingPage from "./pages/Staking";
@@ -61,7 +62,8 @@ const App = () => {
                 <Route path="/home" element={<PrivateRoute><Index /></PrivateRoute>} />
                 <Route path="/discover" element={<PrivateRoute><Discover /></PrivateRoute>} />
                 <Route path="/burn" element={<PrivateRoute><BurnPage /></PrivateRoute>} />
-                <Route path="/stake" element={<PrivateRoute><StakingPage /></PrivateRoute>} />
+                <Route path="/staking" element={<PrivateRoute><StakingPage /></PrivateRoute>} />
+                <Route path="/daily-claim" element={<PrivateRoute><DailyClaim /></PrivateRoute>} />
                 <Route path="/project/:id" element={<PrivateRoute><ProjectDetails /></PrivateRoute>} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />

@@ -96,6 +96,7 @@ export function NFTCard({
                   <div className="text-xs text-gray-400">Reward</div>
                   <div className="text-sm font-medium text-white">{neftReward} NEFT</div>
                 </div>
+
               </div>
               <div className="flex items-center gap-2 bg-white/5 rounded-lg p-2">
                 <Sparkles className="w-4 h-4 text-white" />
@@ -133,3 +134,4 @@ export function NFTCard({
     </Link>
   );
 };
+

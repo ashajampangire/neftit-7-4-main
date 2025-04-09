@@ -1,7 +1,12 @@
+import React from 'react';
 
-const StarryBackground = () => {
+interface StarryBackgroundProps {
+  className?: string;
+}
+
+const StarryBackground: React.FC<StarryBackgroundProps> = ({ className }) => {
   return (
-    <div className="fixed inset-0 bg-[#010a1e]">
+    <div className={`fixed inset-0 bg-[#010a1e] ${className || ''}`}>
       {/* First layer - original starry background */}
       <div 
         className="absolute inset-0 bg-cover bg-center" 

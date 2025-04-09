@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { MainNav } from "@/components/layout/MainNav";
 import { motion } from "framer-motion";
-import { Search, Filter, Sparkles, Clock, Trophy, Coins, Users, ChevronRight, ArrowRight, Star, Timer } from "lucide-react";
+import { Search, Filter, Sparkles, Clock, Trophy, Coins, Users, ChevronRight, ArrowRight, Star, Timer, Flame, TrendingUp, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface Project {
   id: number;
@@ -123,13 +124,55 @@ const Discover = () => {
   );
 
   const categories = [
-    { id: "all", label: "All Projects" },
-    { id: "ending-soon", label: "Ending Soon" },
-    { id: "high-rewards", label: "High Rewards" },
-    { id: "featured", label: "Featured" }
+    { id: "all", label: "All Projects", icon: Sparkles },
+    { id: "ending-soon", label: "Ending Soon", icon: Timer },
+    { id: "high-rewards", label: "High Rewards", icon: Flame },
+    { id: "featured", label: "Featured", icon: Star }
   ];
+
   return (
-    <div className="min-h-screen bg-[#030407] relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Enhanced Background */}
+      <div className="fixed inset-0">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#FF3BFF]/5 via-[#36F9F6]/5 to-[#5C24FF]/5 backdrop-blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
+      </div>
+
+      {/* Decorative Elements */}
+      <motion.div
+        className="fixed -top-24 -right-24 w-48 h-48 rounded-full blur-3xl"
+        animate={{
+          background: [
+            "rgba(255,59,255,0.1)",
+            "rgba(54,249,246,0.1)",
+            "rgba(92,36,255,0.1)",
+            "rgba(255,59,255,0.1)",
+          ],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      />
+      <motion.div
+        className="fixed -bottom-24 -left-24 w-48 h-48 rounded-full blur-3xl"
+        animate={{
+          background: [
+            "rgba(54,249,246,0.1)",
+            "rgba(92,36,255,0.1)",
+            "rgba(255,59,255,0.1)",
+            "rgba(54,249,246,0.1)",
+          ],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      />
+
        <MainNav />
    
       <main className="container relative mx-auto px-4 pt-8 pb-12 space-y-8">
@@ -141,141 +184,354 @@ const Discover = () => {
             className="space-y-8 mt-8" 
           >
             {/* Header */}
-            <div className="pt-16 pb-8 text-center space-y-4 max-w-2xl mx-auto">
+            <div className="pt-16 pb-8 text-center space-y-4 max-w-3xl mx-auto">
               <motion.h1 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-5xl font-bold text-white font-maat"
+                className="text-6xl font-bold font-space-grotesk"
               >
+                <span className="relative inline-block">
+                  <span className="relative z-10 bg-gradient-to-r from-[#FF3BFF] via-[#36F9F6] to-[#5C24FF] bg-clip-text text-transparent">
                 Discover Web3 Projects
+                  </span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-[#FF3BFF]/20 via-[#36F9F6]/20 to-[#5C24FF]/20 blur-2xl"
+                    animate={{
+                      opacity: [0.5, 0.8, 0.5],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "linear"
+                    }}
+                  />
+                </span>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-lg text-white/70"
+                className="text-xl text-text-secondary font-dm-sans"
               >
                 Explore and engage with the most innovative Web3 projects. Complete tasks, earn rewards, and build your NFT collection.
               </motion.p>
             </div>
 
-
-        <div className="grid grid-cols-4 gap-6 mb-12">
-          {[
-            { icon: Users, label: "Active Projects", value: "50+", subtext: "Live quests available" },
-            { icon: Clock, label: "Ending Soon", value: "12", subtext: "Limited time opportunities" },
-            { icon: Trophy, label: "Total XP Available", value: "25,000", subtext: "Experience points to earn" },
-            { icon: Coins, label: "Total NEFT Rewards", value: "100,000", subtext: "Tokens available to claim" }
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {[
+                { icon: Users, label: "Active Projects", value: "50+", subtext: "Live quests available", gradient: "from-[#FF3BFF] to-[#36F9F6]" },
+                { icon: Clock, label: "Ending Soon", value: "12", subtext: "Limited time opportunities", gradient: "from-[#36F9F6] to-[#5C24FF]" },
+                { icon: Trophy, label: "Total XP Available", value: "25,000", subtext: "Experience points to earn", gradient: "from-[#5C24FF] to-[#FF3BFF]" },
+                { icon: Coins, label: "Total NEFT Rewards", value: "100,000", subtext: "Tokens available to claim", gradient: "from-[#FF3BFF] to-[#5C24FF]" }
           ].map((stat, index) => (
-            <div key={index} className="bg-[#1A1B1F] rounded-2xl p-6 border border-gray-800 hover:border-[#00E5FF] transition-colors">
-              <stat.icon className="w-8 h-8 text-[#00E5FF] mb-4" />
-              <div className="text-2xl font-bold mb-2">{stat.value}</div>
-              <div className="text-sm text-gray-400">{stat.subtext}</div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  key={index}
+                  className={cn(
+                    "relative p-6 rounded-3xl",
+                    "bg-background-card/30 backdrop-blur-xl",
+                    "border border-border/50",
+                    "transition-all duration-500",
+                    "hover:border-[#FF3BFF]/20",
+                    "hover:shadow-lg hover:shadow-[#FF3BFF]/5",
+                    "group overflow-hidden"
+                  )}
+                >
+                  {/* Animated Gradient Background */}
+                  <motion.div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    initial={false}
+                    animate={{
+                      background: [
+                        `linear-gradient(to right, ${stat.gradient})`,
+                        `linear-gradient(to left, ${stat.gradient})`,
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
+                  />
+
+                  {/* Glass Overlay */}
+                  <div className="absolute inset-0 bg-background-card/80 backdrop-blur-sm" />
+
+                  {/* Content */}
+                  <div className="relative z-10">
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: [0, -5, 5, -5, 0] }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      className="w-12 h-12 rounded-2xl bg-gradient-to-r from-[#FF3BFF] to-[#36F9F6] flex items-center justify-center mb-4"
+                    >
+                      <stat.icon className="w-6 h-6 text-white" />
+                    </motion.div>
+
+                    <h3 className="text-3xl font-bold font-space-grotesk mb-2">
+                      <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                        {stat.value}
+                      </span>
+                    </h3>
+
+                    <p className="text-text-secondary/80 font-dm-sans text-sm">
+                      {stat.subtext}
+                    </p>
             </div>
+
+                  {/* Bottom Gradient Line */}
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FF3BFF] via-[#36F9F6] to-[#5C24FF]"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
           ))}
         </div>
 
-        <div className="flex items-center space-x-4 mb-8">
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            {/* Search and Filters */}
+            <div className="flex flex-col md:flex-row gap-4 mb-8">
+              <div className="flex-1 relative group">
+                <div className={cn(
+                  "relative p-1 rounded-2xl",
+                  "bg-background-card/30 backdrop-blur-xl",
+                  "border border-border/50",
+                  "transition-all duration-500",
+                  "group-hover:border-[#FF3BFF]/20",
+                  "group-hover:shadow-lg group-hover:shadow-[#FF3BFF]/5",
+                  "overflow-hidden"
+                )}>
+                  {/* Animated Gradient Background */}
+                  <motion.div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    initial={false}
+                    animate={{
+                      background: [
+                        "linear-gradient(to right, rgba(255,59,255,0.05), rgba(54,249,246,0.05))",
+                        "linear-gradient(to left, rgba(255,59,255,0.05), rgba(54,249,246,0.05))",
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
+                  />
+
+                  {/* Glass Overlay */}
+                  <div className="absolute inset-0 bg-background-card/80 backdrop-blur-sm" />
+
+                  {/* Search Input */}
+                  <div className="relative z-10 flex items-center">
+                    <Search className="absolute left-4 w-5 h-5 text-text-secondary transition-colors group-hover:text-text-primary" />
             <input
               type="text"
               placeholder="Search projects by name, category, or chain..."
-              className="w-full bg-[#1A1B1F] border border-gray-800 rounded-xl py-3 pl-12 pr-4 text-white placeholder-gray-400 focus:outline-none focus:border-[#00E5FF]"
+                      className={cn(
+                        "w-full bg-transparent",
+                        "py-3.5 pl-12 pr-4",
+                        "text-text-primary placeholder-text-secondary/50",
+                        "font-dm-sans",
+                        "focus:outline-none",
+                        "transition-all"
+                      )}
             />
           </div>
-          <button 
+                </div>
+              </div>
+
+              <motion.button 
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center space-x-2 bg-[#1A1B1F] border ${showFilters ? "border-[#00E5FF]" : "border-gray-800"} rounded-xl px-4 py-3`}
-          >
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={cn(
+                  "relative px-6 py-3.5 rounded-2xl",
+                  "bg-background-card/30 backdrop-blur-xl",
+                  "border border-border/50",
+                  "transition-all duration-500",
+                  "hover:border-[#FF3BFF]/20",
+                  "hover:shadow-lg hover:shadow-[#FF3BFF]/5",
+                  "overflow-hidden",
+                  "group",
+                  showFilters && "border-[#FF3BFF]/40"
+                )}
+              >
+                {/* Animated Gradient Background */}
+                <motion.div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  initial={false}
+                  animate={{
+                    background: [
+                      "linear-gradient(to right, rgba(255,59,255,0.05), rgba(54,249,246,0.05))",
+                      "linear-gradient(to left, rgba(255,59,255,0.05), rgba(54,249,246,0.05))",
+                    ],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                  }}
+                />
+
+                {/* Glass Overlay */}
+                <div className="absolute inset-0 bg-background-card/80 backdrop-blur-sm" />
+
+                {/* Content */}
+                <div className="relative z-10 flex items-center gap-2 font-dm-sans">
             <Filter className="w-5 h-5" />
             <span>Filters</span>
-          </button>
+                </div>
+
+                {/* Bottom Gradient Line */}
+                <motion.div
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FF3BFF] via-[#36F9F6] to-[#5C24FF]"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: showFilters ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.button>
         </div>
 
-        <div className="flex space-x-4 mb-8">
-          {categories.map((category) => (
-            <button
+            {/* Categories */}
+            <div className="flex flex-wrap gap-3 mb-8">
+              {categories.map((category, index) => (
+                <motion.button
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`px-6 py-2 rounded-full transition-all duration-200 ${
+                  className={cn(
+                    "relative px-6 py-2.5 rounded-full",
+                    "transition-all duration-300",
+                    "font-space-grotesk",
+                    "overflow-hidden group",
                 activeCategory === category.id
-                  ? "bg-[#00E5FF] text-black font-medium" 
-                  : "bg-[#1A1B1F] text-gray-400 hover:bg-[#2A2B2F]"
-              }`}
-            >
+                      ? "bg-gradient-to-r from-[#FF3BFF] via-[#36F9F6] to-[#5C24FF] text-white shadow-lg shadow-[#FF3BFF]/20"
+                      : "bg-background-card/30 backdrop-blur-xl border border-border/50 text-text-secondary hover:text-text-primary"
+                  )}
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    <category.icon className="w-4 h-4" />
               {category.label}
-            </button>
+                  </span>
+                  
+                  {/* Hover Gradient */}
+                  {activeCategory !== category.id && (
+                    <motion.div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-[#FF3BFF]/10 via-[#36F9F6]/10 to-[#5C24FF]/10"
+                      initial={false}
+                      transition={{ duration: 0.3 }}
+                    />
+                  )}
+                </motion.button>
           ))}
         </div>
 
-        <div className="grid grid-cols-4 gap-6">
-          {filteredProjects.map((project) => (
-            <div 
+            {/* Projects Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProjects.map((project, index) => (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
               key={project.id} 
-              className={`group bg-[#1A1B1F] rounded-2xl overflow-hidden border ${project.category === "featured" ? "border-[#00E5FF]" : "border-[#1db35b]"} transition-all duration-300`}
-            >
-              <div className="relative overflow-hidden cursor-pointer" onClick={() => handleProjectClick(project.id)}>
-                <div className="relative w-full h-[180px] bg-[#0A0B0F]">
-                  {/* Main system activation image */}
-                  <img 
-                    src={projectImg} 
-                    alt={project.title} 
-                    className="w-full h-full object-contain" 
+                  onClick={() => handleProjectClick(project.id)}
+                  className={cn(
+                    "relative p-6 rounded-3xl cursor-pointer",
+                    "bg-background-card/30 backdrop-blur-xl",
+                    "border border-border/50",
+                    "transition-all duration-500",
+                    "hover:border-[#FF3BFF]/20",
+                    "hover:shadow-lg hover:shadow-[#FF3BFF]/5",
+                    "group overflow-hidden"
+                  )}
+                >
+                  {/* Animated Gradient Background */}
+                  <motion.div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    initial={false}
+                    animate={{
+                      background: [
+                        "linear-gradient(to right, rgba(255,59,255,0.05), rgba(54,249,246,0.05))",
+                        "linear-gradient(to left, rgba(255,59,255,0.05), rgba(54,249,246,0.05))",
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
                   />
 
-                  {/* Green border glow */}
-                  <div className="absolute inset-x-0 top-0 h-[1px] bg-[#1db35b]/50" />
-                  <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[#1db35b]/50" />
-                  <div className="absolute inset-y-0 left-0 w-[1px] bg-[#1db35b]/50" />
-                  <div className="absolute inset-y-0 right-0 w-[1px] bg-[#1db35b]/50" />
+                  {/* Glass Overlay */}
+                  <div className="absolute inset-0 bg-background-card/80 backdrop-blur-sm" />
 
-                  {project.category === "featured" && (
-                    <div className="absolute top-4 right-4 bg-[#00E5FF] text-black text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5">
-                      <Star size={12} />
-                      Featured
-                    </div>
-                  )}
-                  {project.category === "ending-soon" && (
-                    <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5">
-                      <Timer size={12} />
-                      Ending Soon
-                    </div>
-                  )}
-                </div>
-
-                {/* Stats container below image */}
-                <div className="flex justify-between items-center px-4 py-2 bg-[#1A1B1F]">
-                  <div className="flex items-center gap-2">
-                    <Users size={14} className="text-gray-400" />
-                    <span className="text-xs text-gray-300">{project.spots}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock size={14} className="text-gray-400" />
-                    <span className="text-xs text-gray-300">
-                      {new Date(project.deadline).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
+                  {/* Content */}
+                  <div className="relative z-10 space-y-4">
+                    {/* Project Image */}
+                    <div className="relative aspect-video rounded-xl overflow-hidden">
+                <img 
+                  src={project.image} 
+                  alt={project.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               </div>
               
-              <div className="p-4">
-                <div className="mb-2">
-                  <h3 className="text-base font-medium text-white">
+                    {/* Project Info */}
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold font-space-grotesk text-text-primary group-hover:text-white transition-colors">
                     {project.title}
                   </h3>
-                  <p className="text-xs text-gray-400 mt-0.5">{project.collection}</p>
+                      <p className="text-sm font-dm-sans text-text-secondary">
+                        {project.collection}
+                      </p>
+                    </div>
+
+                    {/* Project Stats */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { label: "Reward", value: project.reward, icon: Coins },
+                        { label: "XP", value: project.xp, icon: Zap },
+                        { label: "Spots", value: project.spots, icon: Users },
+                        { label: "Time Left", value: "2d 5h", icon: Clock }
+                      ].map((stat, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <stat.icon className="w-4 h-4 text-text-secondary" />
+                          <span className="text-sm font-dm-sans text-text-secondary">
+                            {stat.value}
+                          </span>
+                        </div>
+                      ))}
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <div className="text-[#00E5FF] text-sm font-medium">{project.reward}</div>
-                  <div className="text-gray-500 text-xs">•</div>
-                  <div className="text-gray-300 text-sm">{project.xp}</div>
-                </div>
-              </div>
-            </div>
-          ))}
+                    {/* Action Button */}
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex items-center justify-between"
+                    >
+                      <span className="text-sm font-medium font-dm-sans text-text-secondary group-hover:text-text-primary transition-colors">
+                        View Details
+                      </span>
+                      <ArrowRight className="w-5 h-5 text-text-secondary group-hover:text-text-primary transition-colors group-hover:translate-x-1 duration-300" />
+                    </motion.div>
+                  </div>
+
+                  {/* Bottom Gradient Line */}
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FF3BFF] via-[#36F9F6] to-[#5C24FF]"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+              ))}
         </div>
         </motion.div>
         </div>

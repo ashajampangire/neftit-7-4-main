@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Settings,
@@ -17,6 +17,8 @@ import ReferralModal from "@/components/referral/ReferralModal";
 import { Toaster } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useWallet } from "@/components/wallet/WalletProvider";
+import { toast } from "sonner";
 
 interface NavigationItemType {
   name: string;
@@ -43,13 +45,6 @@ export const navigationItems: NavigationItemType[] = [
     description: "Track your progress",
     badge: "3",
     color: "from-purple-500/20 to-purple-600/20",
-  },
-  {
-    name: "Stake",
-    icon: <Flame size={20} />,
-    path: "/stake",
-    description: "Stake NFTs & tokens to earn rewards",
-    color: "from-green-500/20 to-green-600/20",
   },
   {
     name: "Refer and Earn",
@@ -92,13 +87,32 @@ export const bottomNavigationItems: NavigationItemType[] = [
 
 export function NavigationItems() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { disconnect } = useWallet();
   const { referralData, isModalOpen, toggleModal, copyReferralLink } = useReferral();
+  
+  const handleLogout = () => {
+    disconnect();
+    localStorage.setItem("isAuthenticated", "false");
+    toast.success("Logged out successfully");
+    navigate("/auth");
+  };
   
   const navItemsWithHandlers = navigationItems.map(item => {
     if (item.name === "Refer and Earn") {
       return {
         ...item,
         onClick: toggleModal
+      };
+    }
+    return item;
+  });
+  
+  const bottomItemsWithHandlers = bottomNavigationItems.map(item => {
+    if (item.name === "Logout") {
+      return {
+        ...item,
+        onClick: handleLogout
       };
     }
     return item;
@@ -188,7 +202,7 @@ export function NavigationItems() {
       </div>
 
       <div className="space-y-2 border-t border-white/10 pt-4 pb-4 px-2 mt-4 bg-[#0A0A0F]">
-        {bottomNavigationItems.map(renderNavigationItem)}
+        {bottomItemsWithHandlers.map(renderNavigationItem)}
       </div>
       
       <ReferralModal

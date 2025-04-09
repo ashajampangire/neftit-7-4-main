@@ -1,82 +1,109 @@
-
 import React from 'react';
-import { Trophy, Calendar, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Award, Calendar, ChevronRight, Trophy } from 'lucide-react';
 
 const questData = [
   {
     id: 1,
-    title: 'First Steps in Web3',
-    description: 'Complete your first on-chain transaction',
-    completedDate: '2023-12-15',
-    reward: {
-      xp: 50,
-      nft: 'Cosmic Explorer #032'
-    },
-    project: 'NEFTIT Onboarding'
+    title: 'Early Bird',
+    description: 'Join the platform within the first week of launch',
+    completedDate: '2024-03-15',
+    rewards: {
+      xp: 500,
+      coins: 100
+    }
   },
   {
     id: 2,
-    title: 'Community Champion',
-    description: 'Join the Discord server and introduce yourself',
-    completedDate: '2023-12-17',
-    reward: {
-      xp: 30,
-      nft: null
-    },
-    project: 'Community Engagement'
+    title: 'Social Butterfly',
+    description: 'Connect your social media accounts',
+    completedDate: '2024-03-16',
+    rewards: {
+      xp: 300,
+      coins: 50
+    }
   },
   {
     id: 3,
-    title: 'Social Butterfly',
-    description: 'Follow NEFTIT on Twitter and retweet an announcement',
-    completedDate: '2023-12-20',
-    reward: {
-      xp: 25,
-      nft: null
-    },
-    project: 'Social Media Challenge'
+    title: 'First NFT',
+    description: 'Mint your first NFT on the platform',
+    completedDate: '2024-03-17',
+    rewards: {
+      xp: 1000,
+      coins: 200,
+      nft: 'Cosmic Explorer #001'
+    }
   }
 ];
 
 const QuestCard = ({ quest }: { quest: typeof questData[0] }) => {
-  const dateOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
-  const formattedDate = new Date(quest.completedDate).toLocaleDateString(undefined, dateOptions);
-  
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="glass-morphism rounded-xl p-6 hover:shadow-lg transition-all"
+      className="relative overflow-hidden rounded-2xl bg-background-card border border-border hover:border-border-hover transition-all group backdrop-blur-xl"
     >
-      <div className="flex items-start gap-4">
-        <div className="bg-neftit-purple/20 rounded-lg p-3 self-start">
-          <Trophy className="h-6 w-6 text-neftit-purple" />
-        </div>
-        <div className="flex-1">
-          <div className="flex justify-between items-start">
-            <h3 className="text-lg font-medium text-white mb-1">{quest.title}</h3>
-            <div className="flex items-center text-gray-400 text-sm">
-              <Calendar className="h-3 w-3 mr-1" />
-              {formattedDate}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      
+      <div className="p-6 relative">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-text-primary font-space-grotesk group-hover:text-primary transition-colors mb-2">
+              {quest.title}
+            </h3>
+            <p className="text-sm text-text-secondary font-dm-sans mb-4">
+              {quest.description}
+            </p>
+            
+            <div className="flex items-center text-sm text-text-secondary font-manrope">
+              <Calendar className="w-4 h-4 mr-2" />
+              <span>Completed on {new Date(quest.completedDate).toLocaleDateString()}</span>
             </div>
           </div>
-          <p className="text-sm text-gray-400 mb-4">{quest.description}</p>
           
-          <div className="flex justify-between items-center border-t border-white/10 pt-4">
-            <span className="text-sm text-gray-400">{quest.project}</span>
-            <div className="flex items-center gap-3">
+          <div className="ml-4">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Trophy className="w-5 h-5 text-primary" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-6 pt-4 border-t border-border">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
               <div className="flex items-center">
-                <Sparkles className="h-4 w-4 text-neftit-purple mr-1" />
-                <span className="text-white font-medium">{quest.reward.xp} XP</span>
+                <div className="w-6 h-6 rounded-full bg-[#36F9F6]/10 flex items-center justify-center mr-2">
+                  <span className="text-xs font-bold text-[#36F9F6]">XP</span>
+                </div>
+                <span className="text-sm font-medium text-text-primary font-manrope">
+                  +{quest.rewards.xp} XP
+                </span>
               </div>
-              {quest.reward.nft && (
-                <div className="px-2 py-1 bg-neftit-blue/20 rounded-md text-xs font-medium text-neftit-blue">
-                  NFT Reward
+              
+              <div className="flex items-center">
+                <div className="w-6 h-6 rounded-full bg-[#FF2E63]/10 flex items-center justify-center mr-2">
+                  <span className="text-xs font-bold text-[#FF2E63]">$</span>
+                </div>
+                <span className="text-sm font-medium text-text-primary font-manrope">
+                  +{quest.rewards.coins} Coins
+                </span>
+              </div>
+              
+              {quest.rewards.nft && (
+                <div className="flex items-center">
+                  <div className="w-6 h-6 rounded-full bg-[#9D9BF3]/10 flex items-center justify-center mr-2">
+                    <Award className="w-3 h-3 text-[#9D9BF3]" />
+                  </div>
+                  <span className="text-sm font-medium text-text-primary font-manrope">
+                    {quest.rewards.nft}
+                  </span>
                 </div>
               )}
             </div>
+            
+            <button className="p-2 rounded-lg text-text-secondary hover:text-primary hover:bg-primary/10 transition-colors">
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
@@ -87,23 +114,42 @@ const QuestCard = ({ quest }: { quest: typeof questData[0] }) => {
 const CompletedQuests = () => {
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-white">Completed Quests</h2>
-        <div className="text-sm text-neftit-purple">Total: {questData.length}</div>
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-2xl font-bold text-text-primary font-space-grotesk">
+          Completed Quests
+        </h2>
+        <button className="px-4 py-2 rounded-lg text-sm font-medium text-primary hover:bg-primary/10 transition-colors font-manrope">
+          View All
+        </button>
       </div>
       
       <div className="space-y-4">
-        {questData.map(quest => (
-          <QuestCard key={quest.id} quest={quest} />
+        {questData.map((quest, index) => (
+          <motion.div
+            key={quest.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <QuestCard quest={quest} />
+          </motion.div>
         ))}
       </div>
       
       {questData.length === 0 && (
-        <div className="glass-morphism rounded-2xl p-10 text-center">
-          <Trophy className="h-16 w-16 text-neftit-purple/40 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-white mb-2">No Completed Quests Yet</h3>
-          <p className="text-white/60">Start completing quests to earn rewards!</p>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl p-10 text-center bg-background-card backdrop-blur-xl border border-border"
+        >
+          <Trophy className="h-16 w-16 text-primary/40 mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-text-primary font-space-grotesk mb-2">
+            No Completed Quests
+          </h3>
+          <p className="text-text-secondary font-dm-sans">
+            Start completing quests to earn rewards!
+          </p>
+        </motion.div>
       )}
     </div>
   );

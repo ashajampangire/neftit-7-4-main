@@ -1,244 +1,289 @@
-import React, { useState } from 'react';
-import { Activity as ActivityIcon, CheckCircle, Gift, Flame, Filter, Clock, TrendingUp, Zap, ArrowRight } from 'lucide-react';
-import { cn } from "@/lib/utils";
-import ActivityItem, { ActivityType } from '@/components/Activity';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { MainNav } from '@/components/layout/MainNav';
+import { Flame, Trophy, Coins, ArrowUpRight, Clock, Filter, ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import Button from '@/components/Button';
 
-const allActivities = [
-  { id: 1, title: "Completed 'Social Media Quest'", timestamp: "2 hours ago", type: "task" as ActivityType, points: 100 },
-  { id: 2, title: "Claimed Platinum NFT", timestamp: "Yesterday", type: "claim" as ActivityType, points: 500 },
-  { id: 3, title: "Burned 5 Common NFTs for 1 Rare NFT", timestamp: "3 days ago", type: "burn" as ActivityType, points: 250 },
-  { id: 4, title: "Completed 'Twitter Share Quest'", timestamp: "1 week ago", type: "task" as ActivityType, points: 50 },
-  { id: 5, title: "Claimed Silver NFT", timestamp: "2 weeks ago", type: "claim" as ActivityType, points: 200 },
-  { id: 6, title: "Burned 3 Common NFTs for 500 points", timestamp: "3 weeks ago", type: "burn" as ActivityType, points: 300 },
-  { id: 7, title: "Completed 'Daily Login Streak'", timestamp: "1 month ago", type: "task" as ActivityType, points: 75 },
-  { id: 8, title: "Claimed Gold NFT", timestamp: "1 month ago", type: "claim" as ActivityType, points: 350 }
-];
+interface ActivityItem {
+  id: string;
+  type: 'quest' | 'nft' | 'reward';
+  title: string;
+  description: string;
+  timestamp: string;
+  rewards?: {
+    xp?: number;
+    neft?: number;
+  };
+  status?: 'completed' | 'ongoing' | 'expired';
+  image?: string;
+}
 
 const ActivityLog = () => {
-  const [activeFilter, setActiveFilter] = useState<'all' | ActivityType>('all');
+  const [selectedFilter, setSelectedFilter] = React.useState<'all' | 'quests' | 'nfts' | 'rewards'>('all');
+  const [timeRange, setTimeRange] = React.useState<'all' | 'today' | 'week' | 'month'>('all');
 
-  const filteredActivities = activeFilter === 'all' 
-    ? allActivities 
-    : allActivities.filter(activity => activity.type === activeFilter);
+  const stats = [
+    { 
+      label: 'Total XP Earned', 
+      value: '25,000', 
+      icon: Trophy,
+      color: 'from-accent-purple/20 to-transparent'
+    },
+    { 
+      label: 'Quests Completed', 
+      value: '48', 
+      icon: Flame,
+      color: 'from-secondary/20 to-transparent'
+    },
+    { 
+      label: 'NFTs Collected', 
+      value: '12', 
+      icon: Coins,
+      color: 'from-accent-blue/20 to-transparent'
+    },
+    { 
+      label: 'Active Streak', 
+      value: '7 Days', 
+      icon: Clock,
+      color: 'from-accent-green/20 to-transparent'
+    }
+  ];
 
-  const stats = {
-    tasks: allActivities.filter(a => a.type === 'task').length,
-    claims: allActivities.filter(a => a.type === 'claim').length,
-    burns: allActivities.filter(a => a.type === 'burn').length,
-    totalPoints: allActivities.reduce((sum, activity) => sum + activity.points, 0)
+  const activities: ActivityItem[] = [
+    {
+      id: '1',
+      type: 'quest',
+      title: 'Daily Login Streak',
+      description: 'Maintained your login streak for 7 days',
+      timestamp: '2 hours ago',
+      rewards: { xp: 150, neft: 50 },
+      status: 'completed'
+    },
+    {
+      id: '2',
+      type: 'nft',
+      title: 'Cyber Guardian NFT',
+      description: 'Collected a rare NFT from the Cyber Series',
+      timestamp: '5 hours ago',
+      image: '/nft-preview.png'
+    },
+    {
+      id: '3',
+      type: 'reward',
+      title: 'Level Up Reward',
+      description: 'Reached Level 10 in the platform',
+      timestamp: '1 day ago',
+      rewards: { xp: 500, neft: 200 }
+    },
+    // Add more activities as needed
+  ];
+
+  const filteredActivities = activities.filter(activity => {
+    if (selectedFilter === 'all') return true;
+    return activity.type === selectedFilter;
+  });
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
   };
 
   return (
-    <MainNav>
-      <div className="relative min-h-screen bg-[#0A0B0F]">
-        {/* Background Effects */}
-        <div className="fixed inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/images/system-activation.png')] bg-cover bg-center opacity-5" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0A0B0F] via-black/90 to-[#0A0B0F]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent" />
-          
-          {/* Animated Glow Effects */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full filter blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl animate-pulse delay-1000" />
-          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-cyan-500/10 rounded-full filter blur-3xl animate-pulse delay-500" />
-          <div className="absolute bottom-1/3 right-1/3 w-64 h-64 bg-pink-500/10 rounded-full filter blur-3xl animate-pulse delay-700" />
-        </div>
+    <div className="min-h-screen bg-background">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_80%)] pointer-events-none opacity-10" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_500px_at_50%_200px,#1C1D2C,transparent)] pointer-events-none" />
 
-        {/* Content */}
-        <div className="relative z-10 container mx-auto px-4 py-8 md:py-12">
-          {/* Header with Glass Effect */}
-          <div className="mb-8 p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent mb-2">
-                  Activity Log
-                </h1>
-                <p className="text-white/60">Track your journey in the NEFTIT ecosystem</p>
-              </div>
-              
-              {/* Stats Summary */}
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-lg">
-                  <div className="p-2 rounded-full bg-purple-500/20">
-                    <Zap className="h-4 w-4 text-purple-400" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-white/60">Total Points</div>
-                    <div className="text-lg font-bold text-white">{stats.totalPoints}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-lg">
-                  <div className="p-2 rounded-full bg-blue-500/20">
-                    <TrendingUp className="h-4 w-4 text-blue-400" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-white/60">NFTs</div>
-                    <div className="text-lg font-bold text-white">{stats.claims}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-lg">
-                  <div className="p-2 rounded-full bg-red-500/20">
-                    <Clock className="h-4 w-4 text-red-400" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-white/60">Burns</div>
-                    <div className="text-lg font-bold text-white">{stats.burns}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <MainNav />
+
+      <main className="container mx-auto px-4 pt-28 pb-16">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <motion.h1 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/70 font-space-grotesk"
+            >
+              Activity Log
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-lg text-text-secondary font-dm-sans max-w-2xl mx-auto"
+            >
+              Track your journey, achievements, and rewards in the NEFTIT ecosystem
+            </motion.p>
           </div>
 
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-            {/* Stats Cards - Left Column */}
-            <div className="xl:col-span-4 grid grid-cols-1 gap-4">
-              <div className="group relative bg-gradient-to-br from-[#39D98A]/20 to-transparent p-[1px] rounded-xl transition-all duration-300 hover:from-[#39D98A]/30">
-                <div className="bg-[#0A0B0F]/90 rounded-xl p-4 backdrop-blur-xl">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="p-3 rounded-xl bg-[#39D98A]/10 group-hover:bg-[#39D98A]/20 transition-colors">
-                      <CheckCircle className="h-5 w-5 text-[#39D98A]" />
-                    </div>
-                    <div>
-                      <h3 className="text-white/90 font-medium">Tasks Completed</h3>
-                      <p className="text-white/40 text-sm">Quests and challenges</p>
-                    </div>
-                  </div>
-                  <div className="flex items-end justify-between">
-                    <span className="text-4xl font-bold text-white">{stats.tasks}</span>
-                    <div className="text-[#39D98A] text-sm font-medium px-2 py-1 rounded-md bg-[#39D98A]/10">
-                      +3 Today
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative bg-gradient-to-br from-[#3E9FFE]/20 to-transparent p-[1px] rounded-xl transition-all duration-300 hover:from-[#3E9FFE]/30">
-                <div className="bg-[#0A0B0F]/90 rounded-xl p-4 backdrop-blur-xl">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="p-3 rounded-xl bg-[#3E9FFE]/10 group-hover:bg-[#3E9FFE]/20 transition-colors">
-                      <Gift className="h-5 w-5 text-[#3E9FFE]" />
-                    </div>
-                    <div>
-                      <h3 className="text-white/90 font-medium">NFTs Claimed</h3>
-                      <p className="text-white/40 text-sm">Your collection</p>
-                    </div>
-                  </div>
-                  <div className="flex items-end justify-between">
-                    <span className="text-4xl font-bold text-white">{stats.claims}</span>
-                    <div className="text-[#3E9FFE] text-sm font-medium px-2 py-1 rounded-md bg-[#3E9FFE]/10">
-                      +1 Today
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative bg-gradient-to-br from-red-500/20 to-transparent p-[1px] rounded-xl transition-all duration-300 hover:from-red-500/30">
-                <div className="bg-[#0A0B0F]/90 rounded-xl p-4 backdrop-blur-xl">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="p-3 rounded-xl bg-red-500/10 group-hover:bg-red-500/20 transition-colors">
-                      <Flame className="h-5 w-5 text-red-500" />
-                    </div>
-                    <div>
-                      <h3 className="text-white/90 font-medium">NFTs Burned</h3>
-                      <p className="text-white/40 text-sm">For upgrades</p>
-                    </div>
-                  </div>
-                  <div className="flex items-end justify-between">
-                    <span className="text-4xl font-bold text-white">{stats.burns}</span>
-                    <div className="text-red-500 text-sm font-medium px-2 py-1 rounded-md bg-red-500/10">
-                      +2 Today
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Activity List and Filters - Right Column */}
-            <div className="xl:col-span-8 space-y-6">
-              {/* Filter Bar */}
-              <div className="bg-white/5 p-4 rounded-xl backdrop-blur-xl border border-white/10">
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-2 text-white/60">
-                    <Filter className="h-4 w-4" />
-                    <span className="text-sm font-medium">Filter by:</span>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => setActiveFilter('all')}
-                      className={cn(
-                        "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
-                        activeFilter === 'all'
-                          ? "bg-gradient-to-r from-[#3E9FFE] to-purple-500 text-white shadow-lg shadow-[#3E9FFE]/20"
-                          : "text-white/60 hover:text-white hover:bg-white/5"
-                      )}
-                    >
-                      All Activities
-                    </button>
-                    
-                    <button
-                      onClick={() => setActiveFilter('task')}
-                      className={cn(
-                        "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
-                        activeFilter === 'task'
-                          ? "bg-gradient-to-r from-[#39D98A] to-emerald-500 text-white shadow-lg shadow-[#39D98A]/20"
-                          : "text-white/60 hover:text-white hover:bg-white/5"
-                      )}
-                    >
-                      Tasks
-                    </button>
-                    
-                    <button
-                      onClick={() => setActiveFilter('claim')}
-                      className={cn(
-                        "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
-                        activeFilter === 'claim'
-                          ? "bg-gradient-to-r from-[#3E9FFE] to-blue-500 text-white shadow-lg shadow-[#3E9FFE]/20"
-                          : "text-white/60 hover:text-white hover:bg-white/5"
-                      )}
-                    >
-                      Claims
-                    </button>
-                    
-                    <button
-                      onClick={() => setActiveFilter('burn')}
-                      className={cn(
-                        "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
-                        activeFilter === 'burn'
-                          ? "bg-gradient-to-r from-red-500 to-rose-500 text-white shadow-lg shadow-red-500/20"
-                          : "text-white/60 hover:text-white hover:bg-white/5"
-                      )}
-                    >
-                      Burns
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Activity List */}
-              <div className="space-y-3 h-[calc(100vh-20rem)] overflow-y-auto pr-2 custom-scrollbar">
-                {filteredActivities.map(activity => (
-                  <ActivityItem
-                    key={activity.id}
-                    type={activity.type}
-                    title={activity.title}
-                    timestamp={activity.timestamp}
-                    points={activity.points}
-                  />
-                ))}
-                {filteredActivities.length === 0 && (
-                  <div className="bg-white/5 rounded-xl p-8 text-center backdrop-blur-xl border border-white/10">
-                    <p className="text-white/40">No activities found for the selected filter.</p>
-                  </div>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className={cn(
+                  'relative overflow-hidden rounded-2xl bg-background-card p-6',
+                  'border border-border hover:border-border-hover',
+                  'transition-all duration-300 group'
                 )}
-              </div>
-            </div>
+              >
+                <div className={cn(
+                  'absolute inset-0 bg-gradient-to-b opacity-20',
+                  stat.color
+                )} />
+                <stat.icon className="w-8 h-8 text-text-secondary mb-4 group-hover:text-white transition-colors" />
+                <p className="text-2xl font-bold text-text-primary font-poppins mb-2">{stat.value}</p>
+                <p className="text-sm text-text-secondary font-dm-sans">{stat.label}</p>
+              </motion.div>
+            ))}
           </div>
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex gap-3">
+              <Button
+                variant={selectedFilter === 'all' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedFilter('all')}
+              >
+                All Activities
+              </Button>
+              <Button
+                variant={selectedFilter === 'quests' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedFilter('quests')}
+                leftIcon={<Flame className="w-4 h-4" />}
+              >
+                Quests
+              </Button>
+              <Button
+                variant={selectedFilter === 'nfts' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedFilter('nfts')}
+                leftIcon={<Coins className="w-4 h-4" />}
+              >
+                NFTs
+              </Button>
+              <Button
+                variant={selectedFilter === 'rewards' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedFilter('rewards')}
+                leftIcon={<Trophy className="w-4 h-4" />}
+              >
+                Rewards
+              </Button>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<Filter className="w-4 h-4" />}
+              rightIcon={<ChevronDown className="w-4 h-4" />}
+            >
+              Filter by Time
+            </Button>
+          </div>
+
+          {/* Activity Timeline */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="space-y-4"
+          >
+            {filteredActivities.map((activity) => (
+              <motion.div
+                key={activity.id}
+                variants={itemVariants}
+                className={cn(
+                  'relative group rounded-2xl bg-background-card p-6',
+                  'border border-border hover:border-border-hover',
+                  'transition-all duration-300'
+                )}
+              >
+                <div className="flex items-start gap-6">
+                  {activity.image ? (
+                    <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+                      <img
+                        src={activity.image}
+                        alt={activity.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className={cn(
+                      'w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0',
+                      activity.type === 'quest' ? 'bg-secondary/10' : '',
+                      activity.type === 'nft' ? 'bg-accent-blue/10' : '',
+                      activity.type === 'reward' ? 'bg-accent-purple/10' : ''
+                    )}>
+                      {activity.type === 'quest' && <Flame className="w-8 h-8 text-secondary" />}
+                      {activity.type === 'nft' && <Coins className="w-8 h-8 text-accent-blue" />}
+                      {activity.type === 'reward' && <Trophy className="w-8 h-8 text-accent-purple" />}
+                    </div>
+                  )}
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="text-lg font-medium text-text-primary font-space-grotesk">
+                          {activity.title}
+                        </h3>
+                        <p className="text-sm text-text-secondary font-dm-sans mt-1">
+                          {activity.description}
+                        </p>
+                      </div>
+                      <time className="text-sm text-text-tertiary font-dm-sans whitespace-nowrap">
+                        {activity.timestamp}
+                      </time>
+                    </div>
+
+                    {activity.rewards && (
+                      <div className="flex items-center gap-4 mt-4">
+                        {activity.rewards.xp && (
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-purple/10">
+                            <Trophy className="w-4 h-4 text-accent-purple" />
+                            <span className="text-sm font-medium text-text-primary font-dm-sans">
+                              +{activity.rewards.xp} XP
+                            </span>
+                          </div>
+                        )}
+                        {activity.rewards.neft && (
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10">
+                            <Coins className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-medium text-text-primary font-dm-sans">
+                              +{activity.rewards.neft} NEFT
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <button className="p-2 rounded-full hover:bg-white/5 transition-colors opacity-0 group-hover:opacity-100">
+                    <ArrowUpRight className="w-5 h-5 text-text-secondary" />
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
-      </div>
-    </MainNav>
+      </main>
+    </div>
   );
 };
 

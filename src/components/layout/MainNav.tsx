@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
-import { Menu, Flame, Check, X, Gift, CalendarDays } from "lucide-react";
+import { Menu, Flame, Check, X, Gift, CalendarDays, HomeIcon, ActivityIcon, Sparkles, FlameIcon, Zap, HelpCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ProfileButton } from "@/components/profile/ProfileButton";
 import { ProfileBox } from "@/components/profile/ProfileBox";
@@ -15,10 +15,10 @@ import classNames from "classnames";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface MainNavProps {
-  children: React.ReactNode;
+  // children: React.ReactNode; // Removed children requirement
 }
 
-export function MainNav({ children }: MainNavProps) {
+export function MainNav(/* { children }: MainNavProps */) { // Removed children from props destructuring
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [claimed, setClaimed] = useState(false);
@@ -97,7 +97,7 @@ export function MainNav({ children }: MainNavProps) {
         <Button
           variant="outline"
           size="sm"
-          className="bg-gradient-to-r from-orange-500/20 to-red-500/20 hover:from-orange-500/30 hover:to-red-500/30 text-orange-500 border-orange-500/50 backdrop-blur-sm"
+          className="bg-gradient-to-r from-orange-500/20 to-red-500/20 hover:from-orange-500/30 hover:to-red-500/30 text-orange-500 border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:scale-105"
         >
           <div className="relative">
             <Flame className="h-4 w-4 mr-2 animate-pulse" />
@@ -106,7 +106,7 @@ export function MainNav({ children }: MainNavProps) {
           <span className="font-medium">Daily Claim</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#0A0A0F] border-white/10 text-white max-w-md p-0 overflow-hidden">
+      <DialogContent className="bg-card/90 backdrop-blur-xl border-white/10 text-white max-w-md p-0 overflow-hidden">
         <DialogTitle className="sr-only">Daily Streak Rewards</DialogTitle>
         <button
           onClick={() => setIsOpen(false)}
@@ -246,21 +246,67 @@ export function MainNav({ children }: MainNavProps) {
     </Dialog>
   );
 
+  const mainNavItems = [
+    {
+      title: "Home",
+      href: "/",
+      icon: <HomeIcon className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "Activity",
+      href: "/activity",
+      icon: <ActivityIcon className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "Discover",
+      href: "/discover",
+      icon: <Sparkles className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "Burn",
+      href: "/burn",
+      icon: <FlameIcon className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "Stake",
+      href: "/staking",
+      icon: <Zap className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "Daily Claim",
+      href: "/daily-claim",
+      icon: <Gift className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "How It Works",
+      href: "/how-it-works",
+      icon: <HelpCircle className="mr-2 h-4 w-4" />,
+    },
+  ];
+
   return (
     <div>
-      <nav className={classNames(
-        "fixed top-0 w-full z-50 bg-black/20 backdrop-blur-xl border-b border-white/10",
-        "transition-colors duration-200",
-      )}>
+      <motion.nav
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className={classNames(
+          "fixed top-0 w-full z-50 bg-black/20 backdrop-blur-xl border-b border-white/10",
+          "transition-colors duration-200",
+        )}>
         <div className="container h-[72px] flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link 
               to="/" 
               className="text-xl sm:text-2xl font-light tracking-wider text-white hover:text-white/90 transition-colors"
             >
-              <span className="text-2xl font-bold text-white">
+              <motion.span 
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="text-2xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent"
+              >
                 NEFT<span className="text-neon-blue">IT</span>
-              </span>
+              </motion.span>
             </Link>
             
             {!isMobile && (
@@ -269,36 +315,39 @@ export function MainNav({ children }: MainNavProps) {
                   <TooltipTrigger asChild>
                     <Link 
                       to="/discover" 
-                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      className="relative text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      Discover
+                      <span>Discover</span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-blue-500 group-hover:w-full transition-all duration-300"></span>
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent>Explore NFT collections</TooltipContent>
+                  <TooltipContent className="bg-card/90 backdrop-blur-xl border-white/10">Explore NFT collections</TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link 
                       to="/burn" 
-                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      className="relative text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      Burn
+                      <span>Burn</span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 group-hover:w-full transition-all duration-300"></span>
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent>Burn & upgrade your NFTs</TooltipContent>
+                  <TooltipContent className="bg-card/90 backdrop-blur-xl border-white/10">Burn & upgrade your NFTs</TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link 
-                      to="/stake" 
-                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      to="/staking" 
+                      className="relative text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      Stake
+                      <span>Stake</span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-green-500 to-emerald-500 group-hover:w-full transition-all duration-300"></span>
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent>Stake NFTs & tokens to earn rewards</TooltipContent>
+                  <TooltipContent className="bg-card/90 backdrop-blur-xl border-white/10">Stake NFTs & tokens to earn rewards</TooltipContent>
                 </Tooltip>
 
                 <StreakButton />
@@ -308,14 +357,18 @@ export function MainNav({ children }: MainNavProps) {
           
           <div className="flex items-center gap-4">
             {/* Combined NEFT and XP counter */}
-            <div className="hidden sm:flex items-center divide-x divide-white/10 rounded-lg bg-gradient-to-r from-white/5 to-white/[0.07] border border-white/10 backdrop-blur-sm">
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              className="hidden sm:flex items-center divide-x divide-white/10 rounded-lg bg-gradient-to-r from-white/5 to-white/[0.07] border border-white/10 backdrop-blur-sm shadow-lg shadow-black/20"
+            >
               <div className="px-4 py-1.5 flex items-center gap-1.5">
                 <span className="text-sm font-medium bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{neftBalance} NEFT</span>
               </div>
               <div className="px-4 py-1.5 flex items-center gap-1.5">
                 <span className="text-sm font-medium bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{xpPoints} XP</span>
               </div>
-            </div>
+            </motion.div>
 
             {isMobile ? (
               <Sheet>
@@ -323,18 +376,18 @@ export function MainNav({ children }: MainNavProps) {
                   <Button 
                     variant="ghost" 
                     size="icon"
-                    className="text-white"
+                    className="text-white hover:bg-white/5 transition-all duration-200"
                   >
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
                 <SheetContent 
                   side="right" 
-                  className="w-80 bg-[#0A0A0F] border-white/10 p-0 overflow-y-auto"
+                  className="w-80 bg-card/90 backdrop-blur-xl border-white/10 p-0 overflow-y-auto"
                 >
                   <ProfileBox className="border-b border-white/10" />
                   <div className="py-2">
-                    <NavigationItems />
+                    <NavigationItems items={mainNavItems} />
                   </div>
                 </SheetContent>
               </Sheet>
@@ -342,25 +395,30 @@ export function MainNav({ children }: MainNavProps) {
               <Sheet>
                 <SheetTrigger asChild>
                   <div className="animate-scale-in">
-                    <ProfileButton />
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <ProfileButton />
+                    </motion.div>
                   </div>
                 </SheetTrigger>
                 <SheetContent 
                   side="right" 
-                  className="w-[300px] bg-[#0A0A0F] border-white/10 p-0 overflow-y-auto"
+                  className="w-[300px] bg-card/90 backdrop-blur-xl border-white/10 p-0 overflow-y-auto"
                 >
                   <ProfileBox className="border-b border-white/10" />
                   <div className="py-2">
-                    <NavigationItems />
+                    <NavigationItems items={mainNavItems} />
                   </div>
                 </SheetContent>
               </Sheet>
             )}
           </div>
         </div>
-      </nav>
+      </motion.nav>
       <div className="pt-[72px]">
-        {children}
+        {/* {children} */}
       </div>
     </div>
   );

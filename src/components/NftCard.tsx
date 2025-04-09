@@ -1,72 +1,140 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Heart, Share2, Clock, Award } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-import React from "react";
-import { ArrowRight } from "lucide-react";
-
-interface NftCardProps {
-  tier: string;
-  color: "blue" | "purple" | "green" | "gold";
-  quantity: number;
-  description: string;
-  arrowDirection?: "right" | "none";
+interface NFTCardProps {
+  id: string;
+  title: string;
+  image: string;
+  price: string;
+  currency?: string;
+  creator: {
+    name: string;
+    avatar: string;
+  };
+  likes?: number;
+  timeLeft?: string;
+  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
+  onClick?: () => void;
+  className?: string;
 }
 
-const NftCard: React.FC<NftCardProps> = ({
-  tier,
-  color,
-  quantity,
-  description,
-  arrowDirection = "none",
+const NFTCard: React.FC<NFTCardProps> = ({
+  title,
+  image,
+  price,
+  currency = 'NEFT',
+  creator,
+  likes = 0,
+  timeLeft,
+  rarity = 'common',
+  onClick,
+  className
 }) => {
-  const getGradient = () => {
-    switch (color) {
-      case "blue":
-        return "from-neon-blue to-blue-400/70";
-      case "purple":
-        return "from-neon-purple to-purple-500/70";
-      case "green":
-        return "from-neon-green to-green-400/70";
-      case "gold":
-        return "from-yellow-300 to-yellow-600/70";
-      default:
-        return "from-neon-blue to-blue-400/70";
-    }
+  const rarityColors = {
+    common: 'from-accent-blue/20 to-accent-blue/10',
+    rare: 'from-accent-purple/20 to-accent-purple/10',
+    epic: 'from-secondary/20 to-secondary/10',
+    legendary: 'from-accent-yellow/20 to-accent-yellow/10'
+  };
+
+  const rarityBadgeColors = {
+    common: 'bg-accent-blue',
+    rare: 'bg-accent-purple',
+    epic: 'bg-secondary',
+    legendary: 'bg-accent-yellow'
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="w-full max-w-sm">
-        <div className="nft-card">
-          <div className="nft-card-inner">
-            <div className="space-y-3">
-              <div
-                className={`w-full h-32 rounded-lg bg-gradient-to-br ${getGradient()} flex items-center justify-center`}
-              >
-                <span className="text-2xl font-bold text-white">{tier}</span>
-              </div>
-              
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-center">{tier} NFT</h3>
-                <div className="flex justify-center">
-                  <span className="px-3 py-1 bg-[#1F2937] rounded-full text-sm">
-                    Quantity: {quantity}
-                  </span>
-                </div>
-                <p className="text-sm text-foreground/70 text-center">{description}</p>
-              </div>
+    <motion.div
+      whileHover={{ y: -8 }}
+      transition={{ duration: 0.3 }}
+      onClick={onClick}
+      className={cn(
+        'group relative overflow-hidden rounded-2xl bg-background-card',
+        'border border-border hover:border-border-hover',
+        'backdrop-blur-xl transition-all duration-300',
+        'hover:shadow-card-hover cursor-pointer',
+        className
+      )}
+    >
+      {/* Rarity Badge */}
+      <div className="absolute top-4 right-4 z-10">
+        <div className={cn(
+          'px-3 py-1 rounded-full text-xs font-medium shadow-glow',
+          rarityBadgeColors[rarity],
+          'font-manrope'
+        )}>
+          {rarity.charAt(0).toUpperCase() + rarity.slice(1)}
+        </div>
+      </div>
+
+      {/* Image Container */}
+      <div className="relative aspect-square overflow-hidden">
+        <div className={cn(
+          'absolute inset-0 bg-gradient-to-b opacity-30',
+          rarityColors[rarity]
+        )} />
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+        />
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background-card via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <button className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                <Heart className="w-4 h-4 text-white" />
+              </button>
+              <span className="text-sm text-white font-medium font-dm-sans">{likes}</span>
             </div>
+            <button className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+              <Share2 className="w-4 h-4 text-white" />
+            </button>
           </div>
         </div>
       </div>
-      
-      {arrowDirection === "right" && (
-        <div className="hidden lg:flex items-center justify-center mt-16 mx-4">
-          <div className="w-10 h-10 rounded-full bg-[#1F2937] flex items-center justify-center">
-            <ArrowRight className="text-neon-blue" />
+
+      {/* Content */}
+      <div className="p-4 space-y-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-medium text-text-primary font-space-grotesk line-clamp-1">
+              {title}
+            </h3>
+            <div className="flex items-center gap-2 mt-1">
+              <img
+                src={creator.avatar}
+                alt={creator.name}
+                className="w-5 h-5 rounded-full ring-2 ring-border"
+              />
+              <span className="text-sm text-text-secondary font-dm-sans">
+                {creator.name}
+              </span>
+            </div>
           </div>
         </div>
-      )}
-    </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-border">
+          <div>
+            <p className="text-sm text-text-secondary font-dm-sans">Current Price</p>
+            <p className="text-lg font-medium text-primary font-poppins">
+              {price} {currency}
+            </p>
+          </div>
+          {timeLeft && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background-lighter">
+              <Clock className="w-4 h-4 text-text-secondary" />
+              <span className="text-sm text-text-secondary font-dm-sans">{timeLeft}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
-export default NftCard;
+export default NFTCard;

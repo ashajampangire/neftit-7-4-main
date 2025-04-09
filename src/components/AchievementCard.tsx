@@ -1,9 +1,10 @@
 import { Achievement, AchievementType } from "@/lib/achievements";
 import { ProgressIndicator } from "./ProgressIndicator";
-import { Award, CheckCircle2, Medal, Star, Users, Flame, Calendar, Lock } from "lucide-react";
+import { Award, CheckCircle2, Medal, Star, Users, Flame, Calendar, Lock, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface AchievementCardProps {
   achievement: Achievement;
@@ -14,7 +15,12 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   
   const getTypeIcon = (type: AchievementType) => {
-    const iconProps = { className: "w-8 h-8" };
+    const iconProps = { 
+      className: cn(
+        "w-8 h-8 transition-transform duration-300 group-hover:scale-110",
+        getTypeColor(type)
+      )
+    };
     
     switch (type) {
       case 'quest':
@@ -47,29 +53,29 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
       case 'platinum': return 'text-achievement-platinum';
       case 'silver': return 'text-achievement-silver';
       case 'gold': return 'text-achievement-gold';
-      case 'quest': return 'text-[#00ffff]';
-      case 'referral': return 'text-indigo-400';
-      case 'burn': return 'text-orange-400';
-      case 'social': return 'text-purple-400';
-      case 'checkin': return 'text-green-400';
-      default: return 'text-[#00ffff]';
+      case 'quest': return 'text-[#36F9F6]';
+      case 'referral': return 'text-[#9D9BF3]';
+      case 'burn': return 'text-[#FF2E63]';
+      case 'social': return 'text-[#FFD700]';
+      case 'checkin': return 'text-[#39D98A]';
+      default: return 'text-[#36F9F6]';
     }
   };
   
-  const getBadgeStyle = (type: AchievementType) => {
+  const getGradientStyle = (type: AchievementType) => {
     switch (type) {
-      case 'common': return 'from-achievement-common to-achievement-common/50';
-      case 'rare': return 'from-achievement-rare to-achievement-rare/50';
-      case 'legendary': return 'from-achievement-legendary to-achievement-legendary/50';
-      case 'platinum': return 'from-achievement-platinum to-achievement-platinum/50';
-      case 'silver': return 'from-achievement-silver to-achievement-silver/50';
-      case 'gold': return 'from-achievement-gold to-achievement-gold/50';
-      case 'quest': return 'from-[#00ffff] to-purple-500';
-      case 'referral': return 'from-indigo-400 to-blue-600';
-      case 'burn': return 'from-orange-400 to-red-600';
-      case 'social': return 'from-purple-400 to-pink-600';
-      case 'checkin': return 'from-green-400 to-emerald-600';
-      default: return 'from-[#00ffff] to-purple-500';
+      case 'common': return 'from-achievement-common/10 via-transparent to-transparent';
+      case 'rare': return 'from-achievement-rare/10 via-transparent to-transparent';
+      case 'legendary': return 'from-achievement-legendary/10 via-transparent to-transparent';
+      case 'platinum': return 'from-achievement-platinum/10 via-transparent to-transparent';
+      case 'silver': return 'from-achievement-silver/10 via-transparent to-transparent';
+      case 'gold': return 'from-achievement-gold/10 via-transparent to-transparent';
+      case 'quest': return 'from-[#36F9F6]/10 via-transparent to-transparent';
+      case 'referral': return 'from-[#9D9BF3]/10 via-transparent to-transparent';
+      case 'burn': return 'from-[#FF2E63]/10 via-transparent to-transparent';
+      case 'social': return 'from-[#FFD700]/10 via-transparent to-transparent';
+      case 'checkin': return 'from-[#39D98A]/10 via-transparent to-transparent';
+      default: return 'from-[#36F9F6]/10 via-transparent to-transparent';
     }
   };
   
@@ -88,58 +94,122 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.3 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="relative group"
+      className="group"
     >
-      {/* Card content */}
-      <div className="relative bg-white/5 backdrop-blur-xl p-6 rounded-xl border border-white/10">
-        {/* Achievement Icon & Reward */}
-        <div className="flex justify-between items-start mb-6">
-          <div className="relative">
-            <div className="w-16 h-16 rounded-xl flex items-center justify-center bg-white/5">
-              <div className="text-white/80">
-                {getTypeIcon(achievement.type)}
+      <div className={cn(
+        // Base styles
+        "relative overflow-hidden rounded-xl",
+        "bg-background-card/30 backdrop-blur-xl",
+        "border border-border/50",
+        "transition-all duration-300 group",
+        "p-6",
+        
+        // Hover effects
+        "hover:border-primary/20",
+        "hover:shadow-lg hover:shadow-primary/5",
+        
+        // Locked state
+        achievement.status === 'locked' && "opacity-60"
+      )}>
+        {/* Gradient Background */}
+        <div className={cn(
+          "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100",
+          "transition-opacity duration-500",
+          getGradientStyle(achievement.type)
+        )} />
+
+        <div className="relative space-y-6">
+          {/* Achievement Icon & Reward */}
+          <div className="flex justify-between items-start">
+            <div className="relative">
+              <div className={cn(
+                "relative w-16 h-16 rounded-xl",
+                "flex items-center justify-center",
+                "transition-all duration-300 group-hover:scale-105",
+                "overflow-hidden",
+                `bg-${achievement.type === 'locked' ? 'gray-500' : getTypeColor(achievement.type).replace('text-', 'bg-')}/10`
+              )}>
+                {/* Icon Background Gradient */}
+                <div className={cn(
+                  "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100",
+                  "transition-opacity duration-500",
+                  getGradientStyle(achievement.type)
+                )} />
+                <div className="relative">
+                  {getTypeIcon(achievement.type)}
+                </div>
+              </div>
+              
+              {achievement.status === 'locked' && (
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className={cn(
+                    "absolute -top-2 -right-2 w-6 h-6 rounded-full",
+                    "bg-background-card/80 backdrop-blur-sm",
+                    "border border-border/50",
+                    "flex items-center justify-center"
+                  )}
+                >
+                  <Lock className="w-3 h-3 text-text-secondary" />
+                </motion.div>
+              )}
+            </div>
+            
+            {/* Reward Badge */}
+            <div className={cn(
+              "relative overflow-hidden",
+              "px-4 py-2 rounded-full",
+              "bg-background-card/50 backdrop-blur-sm",
+              "border border-border/50 group-hover:border-primary/20",
+              "transition-all duration-300"
+            )}>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="font-space-grotesk font-bold text-text-primary">
+                  +{achievement.reward} NEFT
+                </span>
               </div>
             </div>
-            {achievement.status === 'locked' && (
-              <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                <Lock className="w-3 h-3 text-white/60" />
-              </div>
-            )}
           </div>
           
-          {/* Reward Badge */}
-          <div className="flex items-center bg-white/5 px-4 py-2 rounded-full border border-white/10">
-            <span className="text-base font-semibold text-white">
-              +{achievement.reward} NEFT
-            </span>
+          {/* Title & Description */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold font-space-grotesk text-text-primary group-hover:text-primary transition-colors">
+                {achievement.title}
+              </h3>
+              {achievement.status === 'completed' && isClaimed && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                >
+                  <CheckCircle2 className="w-5 h-5 text-[#39D98A]" />
+                </motion.div>
+              )}
+            </div>
+            <p className="font-dm-sans text-text-secondary leading-relaxed">
+              {achievement.description}
+            </p>
           </div>
+          
+          {/* Progress Indicator */}
+          <ProgressIndicator 
+            status={isClaimed ? 'completed' : achievement.status}
+            currentValue={Math.min(achievement.currentValue, achievement.targetValue)}
+            targetValue={achievement.targetValue}
+            onClick={achievement.status === 'completed' && !isClaimed ? handleClaim : undefined}
+          />
         </div>
-        
-        {/* Title & Description */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-xl font-bold text-white">
-              {achievement.title}
-            </h3>
-            {achievement.status === 'completed' && isClaimed && (
-              <CheckCircle2 className="w-5 h-5 text-white/80" />
-            )}
-          </div>
-          <p className="text-white/60 leading-relaxed">{achievement.description}</p>
-        </div>
-        
-        {/* Progress Indicator */}
-        <ProgressIndicator 
-          status={isClaimed ? 'completed' : achievement.status}
-          currentValue={Math.min(achievement.currentValue, achievement.targetValue)}
-          targetValue={achievement.targetValue}
-          onClick={achievement.status === 'completed' && !isClaimed ? handleClaim : undefined}
-        />
       </div>
     </motion.div>
   );

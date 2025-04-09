@@ -78,7 +78,9 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-dm-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -88,7 +90,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-medium tracking-tight;
+    @apply font-space-grotesk font-bold tracking-tight;
   }
 
   /* Typography styles */
@@ -119,7 +121,26 @@
 
 @layer components {
   .glass-card {
-    @apply bg-black/40 backdrop-blur-xl border border-white/10;
+    @apply bg-[#111827]/70 backdrop-blur-lg border border-white/10 rounded-xl shadow-lg transition-all duration-300 relative;
+  }
+
+  .glass-card::before {
+    content: '';
+    @apply absolute -inset-px rounded-xl p-[1px] opacity-0 transition-opacity duration-300;
+    background: linear-gradient(to right, var(--primary), var(--accent-purple));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+  }
+
+  .glass-card:hover::before {
+    @apply opacity-100;
+  }
+  
+  .glass-card:hover {
+      /* Optional: Slightly lift the card on hover */
+      /* transform: translateY(-2px); */ 
   }
 
   .frosted-glass {
@@ -629,6 +650,67 @@
 
   .hover-card-glow:hover::before {
     opacity: 0.3;
+  }
+
+  /* Refine default Button styles */
+  .button-default {
+    @apply transition-all duration-200;
+  }
+
+  /* Primary Button Enhancement */
+  .button-primary {
+    @apply bg-primary text-black font-semibold hover:bg-primary/90 relative overflow-hidden;
+  }
+
+  .button-primary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+  }
+
+  .button-primary:hover::after {
+    animation: ripple 1s ease-out;
+  }
+  
+  /* Add subtle glow on hover for primary */
+  .button-primary:hover {
+      box-shadow: 0 0 15px 2px rgba(54, 249, 246, 0.3); /* primary color glow */
+  }
+
+  /* Ripple animation */
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0) translate(-50%, -50%);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(20, 20) translate(-50%, -50%);
+      opacity: 0;
+    }
+  }
+  
+  /* Outline Button Refinement */
+  .button-outline {
+      @apply border-border hover:bg-white/5 hover:border-primary/50 hover:text-primary;
+  }
+  
+  /* Ghost Button Refinement */
+  .button-ghost {
+      @apply hover:bg-white/5 hover:text-primary;
+  }
+  
+  /* Secondary Button Refinement */
+  .button-secondary {
+      @apply bg-secondary text-white font-semibold hover:bg-secondary/90;
+      /* Add glow or ripple if desired */
   }
 }
 

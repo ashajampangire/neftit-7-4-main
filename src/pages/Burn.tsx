@@ -1,15 +1,23 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { MainNav } from "@/components/layout/MainNav";
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { 
   Flame, 
   ArrowRight,
   Check,
   Crown,
+  Filter,
+  X,
+  ChevronDown,
+  AlertCircle,
+  Sparkles,
+  Star,
+  TrendingUp,
+  Zap
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -25,287 +33,557 @@ import {
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import "@/styles/fonts.css";
+import { MainNav } from "@/components/layout/MainNav";
 
-type NFTRarity = 'Common' | 'Rare' | 'Legendary';
-type NFTTier = 'Project' | 'Platinum' | 'Silver' | 'Gold';
+// Enhanced types
+interface NFTStats {
+  power: number;
+  rarity: number;
+  level: number;
+}
 
 interface NFT {
   id: string;
-  image: string;
   name: string;
-  rarity: NFTRarity;
-  tier: NFTTier;
-  claimed: boolean;
+  image: string;
+  rarity: string;
+  tier: number;
+  collection: string;
+  stats: NFTStats;
+  burnValue: number;
+  claimed?: boolean;
 }
 
-const burnRules = {
-  Common: { required: 5, result: { tier: 'Platinum' } },
-  PlatinumCommon: { required: 5, result: { tier: 'Silver' } },
-  SilverCommon: { required: 5, result: { tier: 'Gold' } },
-  Rare: { required: 4, result: { tier: 'Platinum' } },
-  PlatinumRare: { required: 4, result: { tier: 'Silver' } },
-  SilverRare: { required: 4, result: { tier: 'Gold' } },
-  Legendary: { required: 3, result: { tier: 'Platinum' } },
-  PlatinumLegendary: { required: 3, result: { tier: 'Silver' } },
-  SilverLegendary: { required: 3, result: { tier: 'Gold' } }
-};
+// Define a BurnStep type to use for the state
+type BurnStep = 'select' | 'confirm' | 'burning' | 'success' | 'complete';
 
-// Mock NFTs using local images
+interface BurnRule {
+  minRarity: string;
+  maxRarity: string;
+  requiredAmount: number;
+  tier: string;
+  resultingNFT: {
+    rarity: string;
+    tier: string;
+    image: string;
+    name: string;
+  };
+}
+
+// Updated burn rules to match the tier system
+const burnRules: BurnRule[] = [
+  { 
+    minRarity: "Common",
+    maxRarity: "Common", 
+    requiredAmount: 5,
+    tier: "1",
+    resultingNFT: {
+      rarity: "Rare",
+      tier: "2",
+      image: "/images/crypto-bear-boss-cool-teddy-with-bling_1173476-4666.jpg",
+      name: "Rare NFT"
+    }
+  },
+  { 
+    minRarity: "Rare",
+    maxRarity: "Rare", 
+    requiredAmount: 3,
+    tier: "2",
+    resultingNFT: {
+      rarity: "Epic",
+      tier: "3",
+      image: "/images/3d-rendering-holographic-layering_23-2150491112.avif",
+      name: "Epic NFT"
+    }
+  },
+  { 
+    minRarity: "Epic",
+    maxRarity: "Epic", 
+    requiredAmount: 3,
+    tier: "3",
+    resultingNFT: {
+      rarity: "Legendary",
+      tier: "4",
+      image: "/images/crypto-currency-token-like-bitcoin-visual-design-artwork_796368-21708.avif",
+      name: "Legendary NFT"
+    }
+  },
+  { 
+    minRarity: "Legendary",
+    maxRarity: "Legendary", 
+    requiredAmount: 3,
+    tier: "4",
+    resultingNFT: {
+      rarity: "Mythic",
+      tier: "5",
+      image: "/images/hidden-mining-concept-illustration_114360-29618.avif",
+      name: "Mythic NFT"
+    }
+  },
+  { 
+    minRarity: "Mythic",
+    maxRarity: "Mythic", 
+    requiredAmount: 3,
+    tier: "5",
+    resultingNFT: {
+      rarity: "Transcendent",
+      tier: "6",
+      image: "/images/3d-rendering-holographic-layering_23-2150491112.avif",
+      name: "Transcendent NFT"
+    }
+  },
+  { 
+    minRarity: "Transcendent",
+    maxRarity: "Transcendent", 
+    requiredAmount: 3,
+    tier: "6",
+    resultingNFT: {
+      rarity: "Divine",
+      tier: "7",
+      image: "/images/crypto-currency-token-like-bitcoin-visual-design-artwork_796368-21708.avif",
+      name: "Divine NFT"
+    }
+  }
+];
+
+// Enhanced mock NFTs with max stats
 const mockNFTs: NFT[] = [
-  { id: "1", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149611030.avif", name: "Common NFT #1", rarity: 'Common', tier: 'Project', claimed: false },
-  { id: "2", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149611036.avif", name: "Common NFT #2", rarity: 'Common', tier: 'Project', claimed: false },
-  { id: "3", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149611054.avif", name: "Common NFT #3", rarity: 'Common', tier: 'Project', claimed: false },
-  { id: "4", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149619505.avif", name: "Common NFT #4", rarity: 'Common', tier: 'Project', claimed: false },
-  { id: "5", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149622021.avif", name: "Common NFT #5", rarity: 'Common', tier: 'Project', claimed: false },
-  { id: "6", image: "/images/crypto-bear-boss-cool-teddy-with-bling_1173476-4666.jpg", name: "Rare NFT #1", rarity: 'Rare', tier: 'Project', claimed: false },
-  { id: "7", image: "/images/cybernetic-gorilla-fierce-futuristic-illustration_477639-6715.avif", name: "Rare NFT #2", rarity: 'Rare', tier: 'Project', claimed: false },
-  { id: "8", image: "/images/monkey-monster-cartoon-hat_545023-627.avif", name: "Rare NFT #3", rarity: 'Rare', tier: 'Project', claimed: false },
-  { id: "9", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149622024.avif", name: "Rare NFT #4", rarity: 'Rare', tier: 'Project', claimed: false },
-  { id: "10", image: "/images/3d-rendering-holographic-layering_23-2150491112.avif", name: "Legendary NFT #1", rarity: 'Legendary', tier: 'Project', claimed: false },
-  { id: "11", image: "/images/crypto-currency-token-like-bitcoin-visual-design-artwork_796368-21708.avif", name: "Legendary NFT #2", rarity: 'Legendary', tier: 'Project', claimed: false },
-  { id: "12", image: "/images/hidden-mining-concept-illustration_114360-29618.avif", name: "Legendary NFT #3", rarity: 'Legendary', tier: 'Project', claimed: false },
+  { 
+    id: "1", 
+    image: "/images/hand-drawn-nft-style-ape-illustration_23-2149611030.avif", 
+    name: "Common NFT #1", 
+    rarity: 'Common', 
+    tier: 1, 
+    collection: 'Project', 
+    stats: { 
+      power: 50, rarity: 50, level: 50,
+    }, 
+    burnValue: 50 
+  },
+  { id: "2", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149611036.avif", name: "Common NFT #2", rarity: 'Common', tier: 1, collection: 'Project', stats: { power: 50, rarity: 50, level: 50 }, burnValue: 50 },
+  { id: "3", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149611054.avif", name: "Common NFT #3", rarity: 'Common', tier: 1, collection: 'Project', stats: { power: 50, rarity: 50, level: 50 }, burnValue: 50 },
+  { id: "4", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149619505.avif", name: "Common NFT #4", rarity: 'Common', tier: 1, collection: 'Project', stats: { power: 50, rarity: 50, level: 50 }, burnValue: 50 },
+  { id: "5", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149622021.avif", name: "Common NFT #5", rarity: 'Common', tier: 1, collection: 'Project', stats: { power: 50, rarity: 50, level: 50 }, burnValue: 50 },
+  { id: "6", image: "/images/crypto-bear-boss-cool-teddy-with-bling_1173476-4666.jpg", name: "Rare NFT #1", rarity: 'Rare', tier: 2, collection: 'Project', stats: { power: 70, rarity: 70, level: 70 }, burnValue: 70 },
+  { id: "7", image: "/images/cybernetic-gorilla-fierce-futuristic-illustration_477639-6715.avif", name: "Rare NFT #2", rarity: 'Rare', tier: 2, collection: 'Project', stats: { power: 70, rarity: 70, level: 70 }, burnValue: 70 },
+  { id: "8", image: "/images/monkey-monster-cartoon-hat_545023-627.avif", name: "Rare NFT #3", rarity: 'Rare', tier: 2, collection: 'Project', stats: { power: 70, rarity: 70, level: 70 }, burnValue: 70 },
+  { id: "9", image: "/images/hand-drawn-nft-style-ape-illustration_23-2149622024.avif", name: "Rare NFT #4", rarity: 'Rare', tier: 2, collection: 'Project', stats: { power: 70, rarity: 70, level: 70 }, burnValue: 70 },
+  { id: "10", image: "/images/3d-rendering-holographic-layering_23-2150491112.avif", name: "Legendary NFT #1", rarity: 'Legendary', tier: 3, collection: 'Project', stats: { power: 90, rarity: 90, level: 90 }, burnValue: 90 },
+  { id: "11", image: "/images/crypto-currency-token-like-bitcoin-visual-design-artwork_796368-21708.avif", name: "Legendary NFT #2", rarity: 'Legendary', tier: 3, collection: 'Project', stats: { power: 90, rarity: 90, level: 90 }, burnValue: 90 },
+  { id: "12", image: "/images/hidden-mining-concept-illustration_114360-29618.avif", name: "Legendary NFT #3", rarity: 'Legendary', tier: 3, collection: 'Project', stats: { power: 90, rarity: 90, level: 90 }, burnValue: 90 },
 ];
 
 const BurnPage = () => {
-  const [selectedFilter, setSelectedFilter] = useState<'All' | NFTRarity | NFTTier>('All');
   const [selectedNFTs, setSelectedNFTs] = useState<NFT[]>([]);
-  const [burnStep, setBurnStep] = useState<'select' | 'confirm' | 'success'>('select');
-  const [resultNFT, setResultNFT] = useState<{ rarity: NFTRarity; tier: NFTTier } | null>(null);
+  const [burnStep, setBurnStep] = useState<BurnStep>('select');
+  const [selectedFilter, setSelectedFilter] = useState<string>('All');
+  const [burnProgress, setBurnProgress] = useState(0);
+  const controls = useAnimation();
+  const [burnChance, setBurnChance] = useState(100);
+  const [showStatsPreview, setShowStatsPreview] = useState(false);
 
-  // Filter NFTs based on selection
-  const filteredNFTs = mockNFTs.filter(nft => {
-    if (!nft.claimed) {
-      if (selectedFilter === 'All') return true;
-      if (['Common', 'Rare', 'Legendary'].includes(selectedFilter as NFTRarity)) {
-        return nft.rarity === selectedFilter;
-      }
-      return nft.tier === selectedFilter;
+  // Enhanced burning animation with particle effects
+  const animateBurning = async () => {
+    setBurnStep('burning');
+    for (let i = 0; i <= 100; i += 10) {
+      setBurnProgress(i);
+      await new Promise(resolve => setTimeout(resolve, 200));
     }
-    return false;
-  });
+    setBurnStep('success');
+  };
 
+  // Calculate burn success chance
+  const calculateBurnChance = (nfts: NFT[]) => {
+    if (nfts.length === 0) return 100;
+    // Hard-coded success rates for now, can be updated with actual rates from rules
+    return 100; // All burns have 100% success rate for now
+  };
+
+  // Enhanced NFT selection handler with updated rules
   const handleSelectNFT = (nft: NFT) => {
-    if (selectedNFTs.length === 0) {
-      setSelectedNFTs([nft]);
-    } else {
-      if (nft.rarity === selectedNFTs[0].rarity && nft.tier === selectedNFTs[0].tier) {
-        const isAlreadySelected = selectedNFTs.find(selected => selected.id === nft.id);
-        if (isAlreadySelected) {
-          setSelectedNFTs(selectedNFTs.filter(selected => selected.id !== nft.id));
-        } else {
-          const rule = getRuleForNFT(selectedNFTs[0]);
-          if (selectedNFTs.length < rule.required) {
-            setSelectedNFTs([...selectedNFTs, nft]);
-          } else {
-            toast.error(`You can only select ${rule.required} NFTs for burning`);
-          }
-        }
-      } else {
-        toast.error("You can only select NFTs of the same type and tier");
+    setSelectedNFTs(prev => {
+      const isSelected = prev.find(selected => selected.id === nft.id);
+      if (isSelected) {
+        return prev.filter(selected => selected.id !== nft.id);
       }
+
+      // Get the burn rule for the NFT
+      const rule = getRuleForNFT(nft);
+      if (!rule) {
+        toast.error("This NFT cannot be burned");
+        return prev;
+      }
+
+      // Check if NFTs are of the same type (rarity and tier)
+      if (prev.length > 0) {
+        if (prev[0].rarity !== nft.rarity || prev[0].tier !== nft.tier) {
+          toast.error("You can only burn NFTs of the same type and tier");
+          return prev;
+        }
+      }
+
+      // Check if we've reached the required amount
+      if (prev.length >= rule.requiredAmount) {
+        toast.error(`You can only select ${rule.requiredAmount} NFTs of this type`);
+        return prev;
+      }
+
+      return [...prev, nft];
+    });
+  };
+
+  // Calculate total burn value with bonus
+  const getTotalBurnValue = () => {
+    if (selectedNFTs.length === 0) return 0;
+    const baseValue = selectedNFTs.reduce((total, nft) => total + nft.burnValue, 0);
+    // Add bonus for burning complete sets
+    const rule = getRuleForNFT(selectedNFTs[0]);
+    if (rule && selectedNFTs.length === rule.requiredAmount) {
+      return baseValue * 1.5; // 50% bonus for complete sets
     }
+    return baseValue;
   };
 
-  const getRuleForNFT = (nft: NFT) => {
-    const key = nft.tier === 'Project' 
-      ? nft.rarity 
-      : `${nft.tier}${nft.rarity}` as keyof typeof burnRules;
-    return burnRules[key];
+  // Enhanced burn handler with updated logic
+  const handleBurn = async () => {
+    if (!canBurn()) return;
+    
+    await animateBurning();
+    
+    // Show success message with enhanced rewards
+    const resultNFT = getResultNFT();
+    toast.success("NFTs burned successfully!", {
+      description: `You received a Tier ${resultNFT?.tier} ${selectedNFTs[0]?.rarity} NFT and ${Math.floor(getTotalBurnValue())} burn points!`
+    });
   };
 
+  // Enhanced burn validation with updated rules
   const canBurn = () => {
     if (selectedNFTs.length === 0) return false;
     const rule = getRuleForNFT(selectedNFTs[0]);
-    return selectedNFTs.length === rule.required;
+    if (!rule) return false;
+    
+    return selectedNFTs.length === rule.requiredAmount && 
+           selectedNFTs.every(nft => 
+             nft.rarity === selectedNFTs[0].rarity && 
+             nft.tier === selectedNFTs[0].tier
+           );
   };
 
+  // Get result NFT based on updated rules
   const getResultNFT = () => {
     if (selectedNFTs.length === 0) return null;
     const nft = selectedNFTs[0];
     const rule = getRuleForNFT(nft);
+    if (!rule) return null;
+    
     return {
-      rarity: nft.rarity,
-      tier: rule.result.tier
+      rarity: rule.resultingNFT.rarity,
+      tier: rule.resultingNFT.tier
     };
   };
 
-  const handleBurn = () => {
-    const result = getResultNFT();
-    if (result) {
-      setResultNFT(result);
-      setBurnStep('success');
-      setTimeout(() => {
-        setSelectedNFTs([]);
-        setBurnStep('select');
-        setResultNFT(null);
-      }, 3000);
-    }
+  // Enhanced rule lookup
+  const getRuleForNFT = (nft: NFT): BurnRule | null => {
+    // Find the rule that matches this NFT's rarity and tier
+    return burnRules.find(rule => 
+      rule.minRarity === nft.rarity && 
+      rule.maxRarity === nft.rarity && 
+      rule.tier === String(nft.tier)
+    ) || null;
   };
 
+  // Filter NFTs based on selection and claimed status
+  const filteredNFTs = mockNFTs.filter(nft => {
+    if (nft.claimed) return false;
+    if (selectedFilter === 'All') return true;
+    if (['Common', 'Rare', 'Legendary'].includes(selectedFilter)) {
+      return nft.rarity === selectedFilter;
+    }
+    // For tier-based filters
+    return nft.tier === parseInt(selectedFilter);
+  });
+
   return (
-    <div className="min-h-screen bg-[#030407] relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-[#030407] to-[#030407]"></div>
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
+    <div className="min-h-screen bg-background">
       <MainNav />
-      <main className="container relative mx-auto px-4 pt-24 pb-12 space-y-16">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
-          <motion.div
+          {/* Header */}
+          <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="space-y-8"
+            transition={{ duration: 0.5 }}
+            className="text-center mb-8"
           >
-            {/* Header */}
-            <div className="pt-12 pb-8 text-center space-y-4 max-w-2xl mx-auto">
-              <motion.h1 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-5xl font-bold text-white font-maat"
-              >
-                NFT Burning System
-              </motion.h1>
-              <motion.p 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-lg text-white/70"
-              >
-                Burn your NFTs to receive exclusive higher-tier NFTs
-              </motion.p>
+            <motion.h1 
+              className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 bg-clip-text text-transparent"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              NFT Burning System
+            </motion.h1>
+            <motion.p 
+              className="text-zinc-400 max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              Combine and burn your NFTs to receive exclusive higher-tier NFTs
+            </motion.p>
+          </motion.div>
+
+          {/* Stats Bar */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <Card className="rounded-lg border bg-card/50 backdrop-blur-sm relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <CardHeader>
+                <CardTitle className="text-sm font-medium">Total Burn Value</CardTitle>
+                <p className="text-2xl font-bold">{getTotalBurnValue()} Points</p>
+              </CardHeader>
+            </Card>
+            <Card className="rounded-lg border bg-card/50 backdrop-blur-sm relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <CardHeader>
+                <CardTitle className="text-sm font-medium">Selected NFTs</CardTitle>
+                <p className="text-2xl font-bold">{selectedNFTs.length} NFTs</p>
+              </CardHeader>
+            </Card>
+            <Card className="rounded-lg border bg-card/50 backdrop-blur-sm relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <CardHeader>
+                <CardTitle className="text-sm font-medium">Burn Chance</CardTitle>
+                <p className="text-2xl font-bold">{calculateBurnChance(selectedNFTs)}%</p>
+              </CardHeader>
+            </Card>
+          </motion.div>
+
+          {/* Filter Bar */}
+          {burnStep === 'select' && (
+            <div className="mb-8">
+              <Card>
+                <CardContent className="p-4">
+                  <Tabs defaultValue="All" className="w-full" onValueChange={(value) => setSelectedFilter(value)}>
+                    <TabsList className="w-full grid grid-cols-7 gap-1">
+                      <TabsTrigger value="All">All</TabsTrigger>
+                      <TabsTrigger value="Common">Common</TabsTrigger>
+                      <TabsTrigger value="Rare">Rare</TabsTrigger>
+                      <TabsTrigger value="Legendary">Legendary</TabsTrigger>
+                      <TabsTrigger value="Platinum">Platinum</TabsTrigger>
+                      <TabsTrigger value="Silver">Silver</TabsTrigger>
+                      <TabsTrigger value="Gold">Gold</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </CardContent>
+              </Card>
             </div>
+          )}
 
-            {/* Filter Bar */}
-            <div className="bg-white/5 backdrop-blur-xl rounded-lg border border-white/10 p-1">
-              <Tabs defaultValue="All" className="w-full" onValueChange={(value) => setSelectedFilter(value as any)}>
-                <TabsList className="w-full bg-transparent grid grid-cols-7 gap-1">
-                  <TabsTrigger value="All" className="data-[state=active]:bg-white/10 text-white">All</TabsTrigger>
-                  <TabsTrigger value="Common" className="data-[state=active]:bg-white/10 text-white">Common</TabsTrigger>
-                  <TabsTrigger value="Rare" className="data-[state=active]:bg-white/10 text-white">Rare</TabsTrigger>
-                  <TabsTrigger value="Legendary" className="data-[state=active]:bg-white/10 text-white">Legendary</TabsTrigger>
-                  <TabsTrigger value="Platinum" className="data-[state=active]:bg-white/10 text-white">Platinum</TabsTrigger>
-                  <TabsTrigger value="Silver" className="data-[state=active]:bg-white/10 text-white">Silver</TabsTrigger>
-                  <TabsTrigger value="Gold" className="data-[state=active]:bg-white/10 text-white">Gold</TabsTrigger>
-                </TabsList>
-              </Tabs>
+          {/* NFT Grid */}
+          {burnStep === 'select' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredNFTs.map((nft, index) => (
+                <Card
+                  key={nft.id}
+                  className={cn(
+                    "group relative overflow-hidden",
+                    selectedNFTs.find(selected => selected.id === nft.id) && "border-primary"
+                  )}
+                  onClick={() => handleSelectNFT(nft)}
+                >
+                  <div className="aspect-square relative">
+                    <img
+                      src={nft.image}
+                      alt={nft.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    
+                    {/* NFT Stats */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2 transform translate-y-full group-hover:translate-y-0 transition-transform">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-primary" />
+                        <Progress value={nft.stats.power} className="h-1.5" />
+                        <span className="text-xs">{nft.stats.power}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Star className="w-4 h-4 text-primary" />
+                        <Progress value={nft.stats.rarity} className="h-1.5" />
+                        <span className="text-xs">{nft.stats.rarity}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Crown className="w-4 h-4 text-primary" />
+                        <Progress value={nft.stats.level} className="h-1.5" />
+                        <span className="text-xs">{nft.stats.level}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-bold">
+                          {nft.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Tier {nft.tier}
+                        </p>
+                      </div>
+                      <Badge>
+                        {nft.rarity}
+                      </Badge>
+                    </div>
+
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Burn Value</span>
+                      <span className="font-medium">{nft.burnValue} Points</span>
+                    </div>
+
+                    {selectedNFTs.find(selected => selected.id === nft.id) && (
+                      <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                        <div className="p-2 rounded-full bg-primary">
+                          <Check className="w-6 h-6 text-background" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              ))}
             </div>
+          )}
 
-            {burnStep === 'select' && (
-              <div className="space-y-8">
-                {/* NFT Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {filteredNFTs.map((nft) => (
-                    <motion.div
-                      key={nft.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className={cn(
-                        "relative group cursor-pointer",
-                        selectedNFTs.find(selected => selected.id === nft.id) 
-                          ? "ring-2 ring-white/40 scale-[0.98] transition-all duration-200" 
-                          : "hover:scale-[1.02] transition-all duration-200"
-                      )}
-                      onClick={() => handleSelectNFT(nft)}
-                    >
-                      <Card className="bg-white/5 border-white/10 overflow-hidden">
-                        <CardContent className="p-4">
-                          <div className="aspect-square rounded-lg overflow-hidden mb-3 relative group-hover:shadow-lg transition-all duration-200">
-                            <img 
-                              src={nft.image} 
-                              alt={nft.name} 
-                              className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
-                            />
-                            {selectedNFTs.find(selected => selected.id === nft.id) && (
-                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                <Check className="h-8 w-8 text-white" />
-                              </div>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <h3 className="text-sm font-medium text-white truncate">{nft.name}</h3>
-                            <Badge 
-                              variant="outline" 
-                              className={cn(
-                                "bg-white/5 border-white/10 text-white",
-                                selectedNFTs.find(selected => selected.id === nft.id) && "bg-white/10"
-                              )}
-                            >
-                              {nft.rarity}
-                            </Badge>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
+          {/* Burning Animation */}
+          {burnStep === 'burning' && (
+            <div className="text-center space-y-8 py-16">
+              <div className="w-32 h-32 mx-auto">
+                <Flame className="w-full h-full text-primary" />
+              </div>
+              
+              <div className="max-w-xs mx-auto">
+                <Progress value={burnProgress} className="h-2" />
+                <p className="mt-4 text-muted-foreground">Burning NFTs... {burnProgress}%</p>
+              </div>
+            </div>
+          )}
 
-                {/* Burn Button */}
-                <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#030407]/80 backdrop-blur-lg border-t border-white/10 md:relative md:bg-transparent md:border-0 md:p-0 z-20">
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        size="lg"
-                        className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold"
-                        disabled={selectedNFTs.length === 0}
-                      >
-                        <Flame className="w-5 h-5 mr-2" />
-                        Burn {selectedNFTs.length} NFTs
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className="bg-[#030407] border-white/10 text-white">
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Confirm NFT Burn</AlertDialogTitle>
-                        <AlertDialogDescription className="text-white/70">
-                          You're about to burn {selectedNFTs.length} {selectedNFTs[0]?.rarity} NFTs to receive:
-                          <div className="mt-4 p-4 bg-white/5 rounded-lg">
-                            <div className="text-white text-lg font-medium flex items-center gap-2">
-                              <Crown className="h-5 w-5" />
-                              1 {getResultNFT()?.tier} {selectedNFTs[0]?.rarity} NFT
-                            </div>
-                          </div>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel className="bg-white/5 text-white hover:bg-white/10 border-white/10">
-                          Cancel
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                          onClick={handleBurn}
-                        >
-                          Confirm Burn
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+          {/* Success State */}
+          {burnStep === 'success' && (
+            <div className="text-center space-y-8 py-16">
+              <div className="w-32 h-32 mx-auto rounded-full bg-primary p-1">
+                <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
+                  <Sparkles className="w-12 h-12 text-primary" />
                 </div>
               </div>
-            )}
 
-            {burnStep === 'success' && resultNFT && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center space-y-6 py-16"
-              >
-                <div className="w-32 h-32 mx-auto bg-white/10 rounded-full flex items-center justify-center">
-                  <Check className="h-16 w-16 text-white" />
-                </div>
-                <h2 className="text-3xl font-bold text-white">Congratulations!</h2>
-                <p className="text-white/70">
-                  You have successfully received 1 {resultNFT.tier} {resultNFT.rarity} NFT
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold">
+                  Congratulations!
+                </h2>
+                <p className="text-muted-foreground">
+                  You have successfully received:
                 </p>
-                <Button
-                  className="bg-white/10 hover:bg-white/20 text-white border-white/10"
-                  onClick={() => setBurnStep('select')}
-                >
-                  Burn More NFTs
-                </Button>
-              </motion.div>
-            )}
-          </motion.div>
+                <div className="flex flex-col items-center gap-4">
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 text-lg font-medium">
+                        <Crown className="w-6 h-6 text-primary" />
+                        1 Tier {Math.min(...selectedNFTs.map(nft => nft.tier)) + 1} {selectedNFTs[0]?.rarity} NFT
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 text-lg font-medium">
+                        <Flame className="w-6 h-6 text-primary" />
+                        {getTotalBurnValue()} Burn Points
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => {
+                  setBurnStep('select');
+                  setSelectedNFTs([]);
+                }}
+              >
+                Burn More NFTs
+              </Button>
+            </div>
+          )}
+
+          {/* Burn Button */}
+          {burnStep === 'select' && (
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => setShowStatsPreview(!showStatsPreview)}
+              >
+                <TrendingUp className="w-4 h-4 mr-2" />
+                View Burn Details
+              </Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    size="lg"
+                    disabled={!canBurn()}
+                  >
+                    <Flame className="w-6 h-6 mr-2" />
+                    Burn {selectedNFTs.length} NFTs
+                  </Button>
+                </AlertDialogTrigger>
+
+                <AlertDialogContent variant="glass" className="p-6">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Confirm NFT Burn
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You're about to burn {selectedNFTs.length} {selectedNFTs[0]?.rarity} NFTs to receive:
+                      <div className="mt-4 space-y-4">
+                        <Card>
+                          <CardContent className="p-6">
+                            <div className="flex items-center gap-3 text-lg font-medium">
+                              <Crown className="w-6 h-6 text-primary" />
+                              1 Tier {Math.min(...selectedNFTs.map(nft => nft.tier)) + 1} {selectedNFTs[0]?.rarity} NFT
+                            </div>
+                          </CardContent>
+                        </Card>
+                        <Card>
+                          <CardContent className="p-6">
+                            <div className="flex items-center gap-3 text-lg font-medium">
+                              <Flame className="w-6 h-6 text-primary" />
+                              {getTotalBurnValue()} Burn Points
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleBurn}
+                    >
+                      Confirm Burn
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
         </div>
-      </main>
+      </div>
     </div>
   );
 };

@@ -1,10 +1,10 @@
-
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flame } from "lucide-react";
+import { Flame, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface BurnProgressProps {
   commonCount: number;
@@ -17,57 +17,85 @@ export const BurnProgress = ({
   commonCount,
   platinumCount,
   silverCount,
-  goldCount
+  goldCount,
 }: BurnProgressProps) => {
+  const totalNFTs = commonCount + platinumCount + silverCount + goldCount;
+  const burnableNFTs = commonCount + silverCount;
+
   return (
-    <Card className="bg-black/40 backdrop-blur-xl border-white/10">
-      <CardContent className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h3 className="text-xl font-bold text-white">Burn Progress</h3>
-          <Link to="/burn">
-            <Button 
-              variant="outline" 
-              className="gap-2 border-purple-500/50 hover:border-purple-500"
-            >
-              <Flame className="w-4 h-4 text-purple-400" />
-              Burn & Upgrade
-            </Button>
-          </Link>
+    <Card className={cn(
+      "relative overflow-hidden",
+      "bg-background-card backdrop-blur-xl",
+      "border-border hover:border-border-hover",
+      "transition-all duration-300 group"
+    )}>
+      <div className="absolute inset-0 bg-gradient-to-br from-[#FF2E63]/5 via-transparent to-transparent opacity-50" />
+      
+      <CardContent className="relative p-6 space-y-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-bold text-text-primary font-space-grotesk mb-1">
+              Burn Progress
+            </h3>
+            <p className="text-sm text-text-secondary font-manrope">
+              {burnableNFTs} NFTs available to burn
+            </p>
+          </div>
+
+          <div className={cn(
+            "w-12 h-12 rounded-xl flex items-center justify-center",
+            "bg-[#FF2E63]/10 group-hover:scale-110 transition-transform duration-300"
+          )}>
+            <Flame className="w-6 h-6 text-[#FF2E63]" />
+          </div>
         </div>
 
         <div className="space-y-4">
-          {[
-            { label: "Common → Platinum", current: commonCount, required: 5, color: "bg-blue-500" },
-            { label: "Platinum → Silver", current: platinumCount, required: 5, color: "bg-purple-500" },
-            { label: "Silver → Gold", current: silverCount, required: 5, color: "bg-yellow-500" }
-          ].map((tier, index) => (
-            <motion.div
-              key={tier.label}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="space-y-2"
-            >
-              <div className="flex justify-between text-sm">
-                <span className="text-white/80">{tier.label}</span>
-                <span className="text-white/60">
-                  {tier.current}/{tier.required} NFTs
-                </span>
-              </div>
-              <Progress 
-                value={(tier.current / tier.required) * 100} 
-                className={`h-2 ${tier.color}`}
-              />
-            </motion.div>
-          ))}
-        </div>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-sm font-manrope">
+              <span className="text-text-secondary">Common NFTs</span>
+              <span className="text-text-primary font-medium">{commonCount}</span>
+            </div>
+            <Progress value={(commonCount / totalNFTs) * 100} className="bg-background h-2" indicatorClassName="bg-[#36F9F6]" />
+          </div>
 
-        <div className="pt-4 border-t border-white/10">
-          <div className="flex justify-between items-center text-sm text-white/60">
-            <span>Current Gold NFTs:</span>
-            <span className="text-yellow-400 font-semibold">{goldCount}</span>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-sm font-manrope">
+              <span className="text-text-secondary">Silver NFTs</span>
+              <span className="text-text-primary font-medium">{silverCount}</span>
+            </div>
+            <Progress value={(silverCount / totalNFTs) * 100} className="bg-background h-2" indicatorClassName="bg-[#9D9BF3]" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-sm font-manrope">
+              <span className="text-text-secondary">Gold NFTs</span>
+              <span className="text-text-primary font-medium">{goldCount}</span>
+            </div>
+            <Progress value={(goldCount / totalNFTs) * 100} className="bg-background h-2" indicatorClassName="bg-[#FFD700]" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-sm font-manrope">
+              <span className="text-text-secondary">Platinum NFTs</span>
+              <span className="text-text-primary font-medium">{platinumCount}</span>
+            </div>
+            <Progress value={(platinumCount / totalNFTs) * 100} className="bg-background h-2" indicatorClassName="bg-[#FF2E63]" />
           </div>
         </div>
+
+        <Link to="/burn">
+          <Button 
+            className={cn(
+              "w-full bg-[#FF2E63] hover:bg-[#FF2E63]/90",
+              "text-black font-medium font-manrope",
+              "flex items-center justify-center gap-2"
+            )}
+          >
+            Start Burning
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   );

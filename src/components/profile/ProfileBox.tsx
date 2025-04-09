@@ -1,36 +1,69 @@
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Trophy } from "lucide-react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
-export function ProfileBox() {
+interface ProfileBoxProps {
+  username?: string;
+  level?: number;
+  avatar?: string;
+}
+
+export function ProfileBox({ username = "neftit ranger", level = 24, avatar }: ProfileBoxProps) {
   return (
-    <Link to="/profile" className="block">
-      <div className="relative p-4 mb-6 rounded-xl hover:bg-white/5 group transition-all duration-200">
-        {/* Glowing border effect */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/5 via-white/[0.07] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    <Link to="/profile">
+      <motion.div 
+        whileHover={{ y: -2 }}
+        className={cn(
+          "relative p-4 mb-6 rounded-xl",
+          "bg-background-card/50 backdrop-blur-md",
+          "border border-border hover:border-border-hover",
+          "transition-all duration-300 group"
+        )}
+      >
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
         
         {/* Content */}
         <div className="relative flex items-center gap-4">
           <div className="relative">
-            <Avatar className="h-12 w-12 ring-2 ring-white/10 group-hover:ring-white/20 transition-all duration-300">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#36F9F6] to-[#FF2E63] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300" />
+            <Avatar className={cn(
+              "h-12 w-12 ring-2",
+              "ring-border group-hover:ring-border-hover",
+              "transition-all duration-300 relative"
+            )}>
               <AvatarImage 
                 alt="Profile" 
-                src="https://i.seadn.io/gae/7B0qai02OdHA8P_EOVK672qUliyjQdQDGNrACxs7WnTgZAkJa_wWURnIFKeOh5VTf8cfTqW3wQpozGedaC9mteKphEOtztls02RlWQ?fit=max&w=350" 
+                src={avatar || "https://i.seadn.io/gae/7B0qai02OdHA8P_EOVK672qUliyjQdQDGNrACxs7WnTgZAkJa_wWURnIFKeOh5VTf8cfTqW3wQpozGedaC9mteKphEOtztls02RlWQ?fit=max&w=350"} 
                 className="group-hover:scale-105 transition-transform duration-300"
               />
-              <AvatarFallback>BA</AvatarFallback>
+              <AvatarFallback>NR</AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-green-500/90 ring-2 ring-[#0A0A0F] group-hover:ring-white/10 transition-all duration-300" />
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="absolute -bottom-1 -right-1 flex items-center gap-1 bg-gradient-to-r from-[#36F9F6] to-[#FF2E63] text-black text-xs font-bold px-2 py-0.5 rounded-full"
+            >
+              <Trophy className="w-3 h-3" />
+              {level}
+            </motion.div>
           </div>
 
           <div className="flex items-center justify-between flex-grow">
-            <h4 className="font-medium text-base text-white/90 group-hover:text-white transition-colors duration-300">
-              neftit ranger
-            </h4>
-            <ChevronRight className="h-4 w-4 text-white/20 group-hover:text-white/40 transition-all duration-300 group-hover:translate-x-0.5" />
+            <div className="space-y-1">
+              <h4 className="font-medium text-base text-text-primary font-space-grotesk group-hover:text-primary transition-colors">
+                {username}
+              </h4>
+              <p className="text-xs text-text-secondary font-manrope">
+                View Profile
+              </p>
+            </div>
+            <ChevronRight className="h-4 w-4 text-text-secondary group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" />
           </div>
         </div>
-      </div>
+      </motion.div>
     </Link>
   );
 }
