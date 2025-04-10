@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit2, Check, Wallet, ChevronRight, Save, ArrowLeft } from "lucide-react";
+import { Edit2, Check, Wallet, ChevronRight, Save, ArrowLeft, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Layout } from "@/components/layout/Layout";
 import StarryBackground from "@/components/layout/StarryBackground";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface ConnectedWallet {
   address: string;
@@ -39,6 +39,9 @@ export default function EditProfile() {
     sessionStorage.getItem("walletAddress") || localStorage.getItem("walletAddress") || "0x4F942090770B6f4Bb1..."
   );
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  // Add error state for form validation
+  const [usernameError, setUsernameError] = useState("");
+  const [walletError, setWalletError] = useState("");
   
   const [connectedWallets, setConnectedWallets] = useState<ConnectedWallet[]>([
     {
@@ -77,22 +80,64 @@ export default function EditProfile() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarUrl(reader.result as string);
-        setHasUnsavedChanges(true);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    
+    // Add file validation
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file",
+      });
+      return;
     }
+    
+    // Check file size (limit to 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select an image under 2MB",
+      });
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatarUrl(reader.result as string);
+      setHasUnsavedChanges(true);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleUsernameChange = (newUsername: string) => {
+    // Clear previous errors
+    setUsernameError("");
+    
+    // Validate username
+    if (newUsername.trim() === '') {
+      setUsernameError("Username cannot be empty");
+      return;
+    }
+    
+    // Limit username length
+    if (newUsername.length > 30) {
+      setUsernameError("Username must be less than 30 characters");
+      return;
+    }
+    
     setUsername(newUsername);
     setHasUnsavedChanges(true);
   };
 
   const handleWalletAddressChange = (address: string) => {
+    // Clear previous errors
+    setWalletError("");
+    
+    // Validate EVM address format (basic check)
+    if (address.length > 10 && !address.startsWith('0x')) {
+      setWalletError("EVM address must start with 0x");
+      return;
+    }
+    
     setWalletAddress(address);
     setConnectedWallets(wallets => 
       wallets.map(wallet => wallet.type === "evm" ? { ...wallet, address } : wallet)
@@ -112,33 +157,50 @@ export default function EditProfile() {
   };
 
   const handleSaveChanges = () => {
-    // Save to both localStorage and sessionStorage for persistence
-    localStorage.setItem("username", username);
-    sessionStorage.setItem("username", username);
+    // Validate before saving
+    if (username.trim() === '') {
+      toast({
+        title: "Invalid username",
+        description: "Username cannot be empty",
+      });
+      return;
+    }
     
-    localStorage.setItem("avatar", avatarUrl);
-    sessionStorage.setItem("avatar", avatarUrl);
-    
-    localStorage.setItem("walletAddress", walletAddress);
-    sessionStorage.setItem("walletAddress", walletAddress);
-    
-    // Save social accounts
-    socialAccounts.forEach(account => {
-      if (account.isConnected && account.username) {
-        localStorage.setItem(account.platform, account.username);
-        sessionStorage.setItem(account.platform, account.username);
-      }
-    });
+    try {
+      // Save to both localStorage and sessionStorage for persistence
+      localStorage.setItem("username", username);
+      sessionStorage.setItem("username", username);
+      
+      localStorage.setItem("avatar", avatarUrl);
+      sessionStorage.setItem("avatar", avatarUrl);
+      
+      localStorage.setItem("walletAddress", walletAddress);
+      sessionStorage.setItem("walletAddress", walletAddress);
+      
+      // Save social accounts
+      socialAccounts.forEach(account => {
+        if (account.isConnected && account.username) {
+          localStorage.setItem(account.platform, account.username);
+          sessionStorage.setItem(account.platform, account.username);
+        }
+      });
 
-    // Event to notify other components that storage has changed
-    window.dispatchEvent(new Event('storage'));
-    
-    setHasUnsavedChanges(false);
-    
-    toast({
-      title: "Changes saved successfully",
-      description: "Your profile has been updated",
-    });
+      // Event to notify other components that storage has changed
+      window.dispatchEvent(new Event('storage'));
+      
+      setHasUnsavedChanges(false);
+      
+      toast({
+        title: "Changes saved successfully",
+        description: "Your profile has been updated",
+      });
+    } catch (error) {
+      console.error("Failed to save profile changes:", error);
+      toast({
+        title: "Error saving changes",
+        description: "Please try again later",
+      });
+    }
   };
 
   const handleGoBack = () => {
@@ -204,7 +266,12 @@ export default function EditProfile() {
                     </Avatar>
                     <label className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer rounded-full">
                       <Edit2 className="h-8 w-8 text-white" />
-                      <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                      <input 
+                        type="file" 
+                        accept="image/jpeg,image/png,image/webp" 
+                        onChange={handleFileChange} 
+                        className="hidden" 
+                      />
                     </label>
                   </div>
                 </div>
@@ -213,21 +280,29 @@ export default function EditProfile() {
                   <div>
                     <label className="text-sm font-medium text-white/60 mb-2 block">Username</label>
                     {isEditingUsername ? (
-                      <div className="flex items-center gap-2 max-w-md">
-                        <Input
-                          value={username}
-                          onChange={(e) => handleUsernameChange(e.target.value)}
-                          className="bg-white/5 border-white/10 text-white text-lg"
-                          placeholder="Enter username"
-                        />
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => setIsEditingUsername(false)}
-                          className="text-green-500 hover:text-green-400 hover:bg-green-500/10"
-                        >
-                          <Check className="h-5 w-5" />
-                        </Button>
+                      <div className="flex flex-col gap-2 max-w-md">
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={username}
+                            onChange={(e) => handleUsernameChange(e.target.value)}
+                            className="bg-white/5 border-white/10 text-white text-lg"
+                            placeholder="Enter username"
+                          />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => setIsEditingUsername(false)}
+                            className="text-green-500 hover:text-green-400 hover:bg-green-500/10"
+                          >
+                            <Check className="h-5 w-5" />
+                          </Button>
+                        </div>
+                        {usernameError && (
+                          <div className="flex items-center gap-2 text-red-400 text-sm">
+                            <AlertCircle className="h-4 w-4" />
+                            <span>{usernameError}</span>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
@@ -258,33 +333,36 @@ export default function EditProfile() {
                 {connectedWallets.map((wallet, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/10 backdrop-blur-sm group hover:from-white/10 transition-all duration-300"
+                    className="flex flex-col p-4 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/10 backdrop-blur-sm group hover:from-white/10 transition-all duration-300"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="h-2.5 w-2.5 rounded-full bg-green-500 ring-4 ring-green-500/20" />
-                      {isEditingUsername ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="h-2.5 w-2.5 rounded-full bg-green-500 ring-4 ring-green-500/20" />
                         <Input 
                           value={wallet.address}
                           onChange={(e) => handleWalletAddressChange(e.target.value)}
-                          className="bg-transparent border-0 border-b border-white/20 rounded-none px-0 text-base font-medium text-white focus-visible:ring-0"
+                          className="bg-transparent border-0 border-b border-white/20 rounded-none px-0 text-base font-medium text-white focus-visible:ring-0 w-full max-w-xs"
+                          placeholder="0x..."
                         />
-                      ) : (
-                        <span className="text-base font-medium text-white group-hover:text-blue-400 transition-colors">
-                          {wallet.address}
-                        </span>
-                      )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-white/60 hover:text-red-400 hover:bg-red-500/10"
+                        onClick={() => toast({
+                          title: "Wallet disconnection",
+                          description: "This feature is not available in the demo",
+                        })}
+                      >
+                        Disconnect
+                      </Button>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-white/60 hover:text-red-400 hover:bg-red-500/10"
-                      onClick={() => toast({
-                        title: "Wallet disconnection",
-                        description: "This feature is not available in the demo",
-                      })}
-                    >
-                      Disconnect
-                    </Button>
+                    {walletError && (
+                      <div className="flex items-center gap-2 text-red-400 text-sm mt-2">
+                        <AlertCircle className="h-4 w-4" />
+                        <span>{walletError}</span>
+                      </div>
+                    )}
                   </div>
                 ))}
                 
