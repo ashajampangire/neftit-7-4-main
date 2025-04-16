@@ -175,28 +175,43 @@ const Activity = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F1114]">
+    <div className="min-h-screen bg-background">
       <StarryBackground />
       <Layout>
-        <main className="container relative mx-auto px-4 pb-16">
+        <motion.main
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="container relative mx-auto px-4 pb-16"
+        >
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Header Section */}
-            <div className="border-b border-[#2D3748]/50 pb-4 md:pb-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="border-b border-border/50 pb-4 md:pb-6"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold font-sora tracking-tight text-white">
+                  <h1 className="font-site-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                     Activity Log
                   </h1>
-                  <p className="text-sm sm:text-base font-sora text-[#94A3B8] max-w-2xl mt-1">
+                  <p className="font-site-body text-sm sm:text-base text-muted-foreground max-w-2xl mt-1">
                     Track your journey, achievements, and rewards in the NEFTIT
                     ecosystem
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3"
+            >
               {[
                 { icon: Trophy, label: "Tasks Completed", value: taskCount },
                 { icon: Gift, label: "NFTs Claimed", value: claimCount },
@@ -207,97 +222,113 @@ const Activity = () => {
                   value: allActivities.length,
                 },
               ].map((stat, index) => (
-                <div
-                  key={index}
-                  className="p-2 sm:p-3 md:p-4 rounded-lg bg-[#171923] border border-[#2D3748]/50 flex items-center gap-2 sm:gap-3"
-                >
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-[#1A202C]">
-                    <stat.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#38B2AC]" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs sm:text-sm text-[#94A3B8] truncate">
-                      {stat.label}
+                <Card key={index} className="glass-card p-2 sm:p-3 md:p-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 rounded-lg bg-background/60">
+                      <stat.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                     </div>
-                    <div className="text-sm sm:text-base md:text-xl font-bold text-white truncate">
-                      {stat.value}
+                    <div className="min-w-0">
+                      <div className="text-xs sm:text-sm text-muted-foreground truncate">
+                        {stat.label}
+                      </div>
+                      <div className="text-sm sm:text-base md:text-xl font-bold text-foreground truncate">
+                        {stat.value}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Card>
               ))}
-            </div>
+            </motion.div>
 
             {/* Search and Filters */}
-            <div className="bg-[#171923] rounded-lg md:rounded-xl border border-[#2D3748]/50 p-3 md:p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="glass-card p-3 md:p-4"
+            >
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                 <div className="flex-1 relative">
                   <div className="relative rounded-lg">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-[#94A3B8]" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                     <input
                       type="text"
                       placeholder="Search activities..."
-                      className="w-full bg-[#1A202C] py-2 sm:py-3 pl-9 sm:pl-12 pr-3 sm:pr-4 rounded-lg text-sm sm:text-base text-white placeholder-[#718096] font-sora focus:outline-none focus:ring-1 focus:ring-[#38B2AC]"
+                      className="w-full bg-background/60 py-2 sm:py-3 pl-9 sm:pl-12 pr-3 sm:pr-4 rounded-lg text-sm sm:text-base text-foreground placeholder:text-muted-foreground font-site-body focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Filter Buttons */}
-            <div className="flex flex-wrap gap-1.5 sm:gap-2">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex flex-wrap gap-1.5 sm:gap-2"
+            >
               {[
                 { id: "all", label: "All Activities" },
                 { id: "task", label: "Tasks", icon: Trophy },
                 { id: "claim", label: "Claims", icon: Gift },
                 { id: "burn", label: "Burns", icon: Flame },
               ].map((category) => (
-                <button
+                <Button
                   key={category.id}
                   onClick={() => setFilter(category.id as ActivityType | "all")}
+                  variant={filter === category.id ? "default" : "outline"}
+                  size="sm"
                   className={cn(
-                    "px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg font-sora transition-colors duration-200 text-xs sm:text-sm flex items-center gap-2",
-                    filter === category.id
-                      ? "bg-[#38B2AC] text-white"
-                      : "bg-[#171923] text-[#94A3B8] border border-[#2D3748]/50 hover:border-[#4A5568]"
+                    "font-site-body text-xs sm:text-sm flex items-center gap-2",
+                    filter === category.id &&
+                      "bg-primary text-primary-foreground"
                   )}
                 >
                   {category.icon && (
                     <category.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   )}
                   {category.label}
-                </button>
+                </Button>
               ))}
-            </div>
+            </motion.div>
 
             {/* Activities List */}
-            <div className="space-y-3">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="space-y-3"
+            >
               {filteredActivities.length > 0 ? (
                 filteredActivities.map((activity) => (
-                  <div
+                  <motion.div
                     key={activity.id}
+                    whileHover={{ scale: 1.005 }}
                     onClick={() => handleViewDetails(activity)}
-                    className="rounded-xl bg-[#171923] border border-[#2D3748]/50 hover:border-[#38B2AC]/50 hover:shadow-lg hover:shadow-[#38B2AC]/10 transition-all duration-200 cursor-pointer p-4"
+                    className="glass-card p-4 hover:border-primary/50 cursor-pointer"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-lg bg-[#1A202C]">
+                      <div className="p-2 rounded-lg bg-background/60">
                         {getActivityIcon(activity.type)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-base sm:text-lg font-bold font-sora text-white mb-1 truncate">
+                        <h3 className="font-site-heading text-base sm:text-lg font-bold text-foreground mb-1 truncate">
                           {activity.item}
                         </h3>
-                        <div className="flex items-center gap-2 text-sm text-[#94A3B8]">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <span>{activity.timestamp}</span>
                           {activity.status && (
                             <>
-                              <span className="w-1 h-1 rounded-full bg-[#2D3748]"></span>
+                              <span className="w-1 h-1 rounded-full bg-border"></span>
                               <span
                                 className={cn(
                                   "px-2 py-0.5 rounded-full text-xs",
                                   activity.status === "completed"
-                                    ? "bg-[#38B2AC]/20 text-[#38B2AC]"
+                                    ? "bg-primary/20 text-primary"
                                     : activity.status === "pending"
-                                    ? "bg-[#F6AD55]/20 text-[#F6AD55]"
-                                    : "bg-[#F56565]/20 text-[#F56565]"
+                                      ? "bg-yellow-500/20 text-yellow-500"
+                                      : "bg-destructive/20 text-destructive"
                                 )}
                               >
                                 {activity.status}
@@ -306,37 +337,41 @@ const Activity = () => {
                           )}
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-[#94A3B8]" />
+                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
                     </div>
-                  </div>
+                  </motion.div>
                 ))
               ) : (
-                <div className="text-center py-12 bg-[#171923] rounded-xl border border-[#2D3748]/50">
-                  <Clock className="w-12 h-12 text-[#94A3B8] mx-auto mb-4" />
-                  <h3 className="text-lg font-bold text-white mb-2">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="glass-card text-center py-12"
+                >
+                  <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="font-site-heading text-lg font-bold text-foreground mb-2">
                     No Activities Found
                   </h3>
-                  <p className="text-[#94A3B8]">
+                  <p className="font-site-body text-muted-foreground">
                     Complete tasks, claim rewards or burn NFTs to see your
                     activity history here.
                   </p>
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.div>
           </div>
-        </main>
+        </motion.main>
 
         {/* Activity Details Modal */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="bg-[#171923] border-[#2D3748]/50 text-white max-w-md">
+          <DialogContent className="glass-card max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-xl font-bold font-sora">
+              <DialogTitle className="font-site-heading text-xl">
                 Activity Details
               </DialogTitle>
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-4 top-4 text-[#94A3B8] hover:text-white"
+                className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
                 onClick={() => setIsModalOpen(false)}
               >
                 <X className="h-4 w-4" />
@@ -346,51 +381,57 @@ const Activity = () => {
             {selectedActivity && (
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-[#1A202C]">
+                  <div className="p-3 rounded-lg bg-background/60">
                     {getActivityIcon(selectedActivity.type)}
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold font-sora text-white mb-1">
+                    <h3 className="font-site-heading text-lg font-bold text-foreground mb-1">
                       {selectedActivity.item}
                     </h3>
-                    <p className="text-sm text-[#94A3B8]">
+                    <p className="font-site-body text-sm text-muted-foreground">
                       {selectedActivity.timestamp}
                     </p>
                   </div>
                 </div>
 
                 {selectedActivity.details && (
-                  <div className="p-4 rounded-lg bg-[#1A202C] border border-[#2D3748]/50">
-                    <p className="text-[#94A3B8]">{selectedActivity.details}</p>
+                  <div className="glass-card p-4">
+                    <p className="font-site-body text-muted-foreground">
+                      {selectedActivity.details}
+                    </p>
                   </div>
                 )}
 
                 {selectedActivity.reward && (
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-[#1A202C] border border-[#2D3748]/50">
+                  <div className="glass-card p-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Gift className="h-5 w-5 text-[#38B2AC]" />
-                      <span className="font-medium text-white">Reward</span>
+                      <Gift className="h-5 w-5 text-primary" />
+                      <span className="font-medium text-foreground">
+                        Reward
+                      </span>
                     </div>
-                    <span className="text-[#38B2AC]">
+                    <span className="text-primary">
                       {selectedActivity.reward}
                     </span>
                   </div>
                 )}
 
                 {selectedActivity.status && (
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-[#1A202C] border border-[#2D3748]/50">
+                  <div className="glass-card p-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Zap className="h-5 w-5 text-[#38B2AC]" />
-                      <span className="font-medium text-white">Status</span>
+                      <Zap className="h-5 w-5 text-primary" />
+                      <span className="font-medium text-foreground">
+                        Status
+                      </span>
                     </div>
                     <span
                       className={cn(
                         "px-2 py-1 rounded-full text-xs font-medium",
                         selectedActivity.status === "completed"
-                          ? "bg-[#38B2AC]/20 text-[#38B2AC]"
+                          ? "bg-primary/20 text-primary"
                           : selectedActivity.status === "pending"
-                          ? "bg-[#F6AD55]/20 text-[#F6AD55]"
-                          : "bg-[#F56565]/20 text-[#F56565]"
+                            ? "bg-yellow-500/20 text-yellow-500"
+                            : "bg-destructive/20 text-destructive"
                       )}
                     >
                       {selectedActivity.status}
@@ -402,7 +443,7 @@ const Activity = () => {
 
             <DialogFooter>
               <Button
-                className="w-full bg-[#38B2AC] hover:bg-[#319795] text-white font-bold"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
                 onClick={() => setIsModalOpen(false)}
               >
                 Close

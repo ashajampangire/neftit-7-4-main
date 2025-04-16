@@ -22,9 +22,16 @@ const Achievements = () => {
 
   return (
     <div className="min-h-screen bg-[#0F1114] relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-[#0F1114] to-[#0F1114]"></div>
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-[#0F1114] to-[#0F1114]" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5" />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#36F9F6]/30 rounded-full filter blur-[100px]" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/30 rounded-full filter blur-[100px]" />
+      </div>
+
       <MainNav />
+
       <div className="container relative mx-auto px-4 py-12 max-w-6xl pt-24">
         <motion.div
           initial={{ opacity: 0 }}
@@ -40,8 +47,8 @@ const Achievements = () => {
               className="mb-6 md:mb-0"
             >
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-[#38B2AC]/20">
-                  <Award className="w-8 h-8 text-[#38B2AC]" />
+                <div className="p-3 rounded-xl bg-[#36F9F6]/20">
+                  <Award className="w-8 h-8 text-[#36F9F6]" />
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-white font-sora">
@@ -52,11 +59,11 @@ const Achievements = () => {
                   </p>
                   <div className="flex items-center gap-4 mt-2">
                     <div className="text-sm text-[#94A3B8]">
-                      <span className="text-[#38B2AC] font-medium">250</span>{" "}
+                      <span className="text-[#36F9F6] font-medium">250</span>{" "}
                       Points
                     </div>
                     <div className="text-sm text-[#94A3B8]">
-                      <span className="text-[#38B2AC] font-medium">Silver</span>{" "}
+                      <span className="text-[#36F9F6] font-medium">Silver</span>{" "}
                       Rank
                     </div>
                   </div>
@@ -67,7 +74,7 @@ const Achievements = () => {
             <div className="flex items-center gap-6">
               <div className="text-right">
                 <div className="flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-[#38B2AC]" />
+                  <Trophy className="w-5 h-5 text-[#36F9F6]" />
                   <p className="text-2xl font-bold text-white font-sora">
                     {completed}
                     <span className="text-[#94A3B8] text-lg font-sora">
@@ -79,7 +86,7 @@ const Achievements = () => {
                 <div className="mt-2">
                   <Progress
                     value={completionPercentage}
-                    className="h-2 w-32 [&>div]:bg-[#38B2AC] bg-white/5"
+                    className="h-2 w-32 [&>div]:bg-[#36F9F6] bg-white/5"
                   />
                 </div>
               </div>
@@ -95,10 +102,10 @@ const Achievements = () => {
             className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12"
           >
             <div className="relative group">
-              <div className="relative bg-[#171923] backdrop-blur-xl p-6 rounded-xl border border-[#2D3748]/50 hover:border-[#38B2AC]/20 transition-all duration-300">
+              <div className="relative bg-[#171923] backdrop-blur-xl p-6 rounded-xl border border-[#2D3748]/50 hover:border-[#36F9F6]/20 transition-all duration-300">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-lg bg-[#38B2AC]/20">
-                    <Trophy className="w-6 h-6 text-[#38B2AC]" />
+                  <div className="p-3 rounded-lg bg-[#36F9F6]/20">
+                    <Trophy className="w-6 h-6 text-[#36F9F6]" />
                   </div>
                   <div>
                     <p className="text-3xl font-bold text-white font-sora">
@@ -113,10 +120,10 @@ const Achievements = () => {
             </div>
 
             <div className="relative group">
-              <div className="relative bg-[#171923] backdrop-blur-xl p-6 rounded-xl border border-[#2D3748]/50 hover:border-[#38B2AC]/20 transition-all duration-300">
+              <div className="relative bg-[#171923] backdrop-blur-xl p-6 rounded-xl border border-[#2D3748]/50 hover:border-[#36F9F6]/20 transition-all duration-300">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-lg bg-[#38B2AC]/20">
-                    <Sparkles className="w-6 h-6 text-[#38B2AC]" />
+                  <div className="p-3 rounded-lg bg-[#36F9F6]/20">
+                    <Sparkles className="w-6 h-6 text-[#36F9F6]" />
                   </div>
                   <div>
                     <p className="text-3xl font-bold text-white font-sora">
@@ -129,10 +136,10 @@ const Achievements = () => {
             </div>
 
             <div className="relative group">
-              <div className="relative bg-[#171923] backdrop-blur-xl p-6 rounded-xl border border-[#2D3748]/50 hover:border-[#38B2AC]/20 transition-all duration-300">
+              <div className="relative bg-[#171923] backdrop-blur-xl p-6 rounded-xl border border-[#2D3748]/50 hover:border-[#36F9F6]/20 transition-all duration-300">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-lg bg-[#38B2AC]/20">
-                    <Target className="w-6 h-6 text-[#38B2AC]" />
+                  <div className="p-3 rounded-lg bg-[#36F9F6]/20">
+                    <Target className="w-6 h-6 text-[#36F9F6]" />
                   </div>
                   <div>
                     <p className="text-3xl font-bold text-white font-sora">
