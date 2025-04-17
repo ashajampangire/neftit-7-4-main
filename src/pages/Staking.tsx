@@ -782,30 +782,44 @@ const StakingPage = () => {
   };
 
   return (
-    <TooltipProvider>
-      <div className="min-h-screen bg-[#0F1114] font-sora">
-        {/* Dark Background */}
-        <div className="fixed inset-0 bg-[#0F1114]" />
+    <div className="min-h-screen bg-[#0F1114] font-sora">
+      {/* Dark Background */}
+      <div className="fixed inset-0 bg-[#0F1114]" />
 
-        <MainNav />
+      <MainNav />
 
-        <main className="container relative mx-auto px-3 sm:px-4 md:px-6 pt-6 pb-10 md:pb-16 space-y-4 md:space-y-6">
-          <div className="max-w-7xl mx-auto">
-            {/* Page Header */}
-            <div className="border-b border-[#2D3748]/50 pb-4 md:pb-6 mt-3 md:mt-4">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold font-sora tracking-tight text-white">
-                    NFT Staking Station
-                  </h1>
-                  <p className="text-sm sm:text-base font-sora text-[#94A3B8] max-w-2xl mt-1">
-                    Earn passive rewards by staking your NFTs and NEFT tokens
-                  </p>
-                </div>
+      <main className="container relative mx-auto px-4 pt-0 mt-0 pb-10 md:pb-16 space-y-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Page Header */}
+          <div className="border-b border-[#2D3748]/50 pb-4 md:pb-6 mt-0 pt-0">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-0 pt-0">
+                  Staking Platform
+                </h1>
+                <p className="text-sm sm:text-base text-[#94A3B8] max-w-2xl mt-1">
+                  Stake your NFTs and tokens to earn rewards and contribute to the ecosystem
+                </p>
               </div>
             </div>
+          </div>
 
-            {isConnected ? (
+          {/* Rest of the content */}
+          <div className="mt-4">
+            {!isConnected ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <Card className="w-full max-w-md bg-[#171923] border-[#2D3748]/50 rounded-xl text-center p-8">
+                  <h2 className="text-2xl font-bold mb-4 text-white">
+                    Connect Wallet to Stake
+                  </h2>
+                  <p className="text-[#94A3B8] mb-8">
+                    Connect your wallet to start staking your NFTs and NEFT
+                    tokens
+                  </p>
+                  <WalletConnect />
+                </Card>
+              </div>
+            ) : (
               <>
                 <Tabs
                   defaultValue="nfts"
@@ -1270,24 +1284,11 @@ const StakingPage = () => {
                   stakedAmount={tokenStaked}
                 />
               </>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20">
-                <Card className="w-full max-w-md bg-[#171923] border-[#2D3748]/50 rounded-xl text-center p-8">
-                  <h2 className="text-2xl font-bold mb-4 text-white">
-                    Connect Wallet to Stake
-                  </h2>
-                  <p className="text-[#94A3B8] mb-8">
-                    Connect your wallet to start staking your NFTs and NEFT
-                    tokens
-                  </p>
-                  <WalletConnect />
-                </Card>
-              </div>
             )}
           </div>
-        </main>
-      </div>
-    </TooltipProvider>
+        </div>
+      </main>
+    </div>
   );
 };
 

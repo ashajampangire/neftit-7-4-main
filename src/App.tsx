@@ -21,6 +21,7 @@ import Achievements from "./pages/Achievements";
 import Leaderboard from "./pages/Leaderboard";
 import HowItWorks from "./pages/HowItWorks";
 import DailyClaim from "./pages/DailyClaim";
+import QuestRewardsNew from "./pages/QuestRewardsNew";
 import { useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import StakingPage from "./pages/Staking";
@@ -78,6 +79,7 @@ const AppRoutes = () => {
         <Route path="/discover" element={<Discover />} />
         <Route path="/discover/:id" element={<ProjectDetails />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/quests" element={<QuestRewardsNew />} />
         <Route path="*" element={<NotFound />} />
 
         {/* Protected pages */}

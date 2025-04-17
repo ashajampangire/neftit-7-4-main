@@ -177,12 +177,12 @@ const Activity = () => {
   return (
     <div className="min-h-screen bg-background">
       <StarryBackground />
-      <Layout>
+      <Layout className="pt-0">
         <motion.main
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="container relative mx-auto px-4 pb-16"
+          className="container relative mx-auto px-4 pt-0 mt-0 pb-16"
         >
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Header Section */}

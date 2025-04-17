@@ -32,7 +32,7 @@ const Achievements = () => {
 
       <MainNav />
 
-      <div className="container relative mx-auto px-4 py-12 max-w-6xl pt-24">
+      <div className="container relative mx-auto px-4 pb-12 pt-0 mt-0 max-w-6xl">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

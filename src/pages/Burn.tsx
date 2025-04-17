@@ -450,13 +450,13 @@ const BurnPage = () => {
 
       <MainNav />
 
-      <main className="container relative mx-auto px-3 sm:px-4 md:px-6 pt-6 pb-10 md:pb-16 space-y-4 md:space-y-6">
+      <main className="container relative mx-auto px-3 sm:px-4 md:px-6 pt-0 mt-0 pb-10 md:pb-16 space-y-4 md:space-y-6">
         <div className="max-w-7xl mx-auto">
           {/* Page Header */}
-          <div className="border-b border-[#2D3748]/50 pb-4 md:pb-6 mt-3 md:mt-4">
+          <div className="border-b border-[#2D3748]/50 pb-4 md:pb-6 mt-0 pt-0">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold font-sora tracking-tight text-white">
+                <h1 className="text-2xl sm:text-3xl font-bold font-sora tracking-tight text-white mt-0 pt-0">
                   NFT Burning Station
                 </h1>
                 <p className="text-sm sm:text-base font-sora text-[#94A3B8] max-w-2xl mt-1">

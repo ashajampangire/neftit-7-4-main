@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Twitter, MessageCircle, Wallet, Check, Trophy, Sparkles, Gem, ArrowRight, Info } from "lucide-react";
+import { Twitter, MessageCircle, Wallet, Check, Trophy, Sparkles, Gem, ArrowRight, Info, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -48,132 +48,112 @@ export const NFTTaskList = ({ tasks: initialTasks }: NFTTaskListProps) => {
   };
 
   return (
-    <div className="space-y-12">
-      {/* Campaign Progress */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-2">
-          <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-            Campaign Tasks
-          </h2>
-          <p className="text-gray-400">Complete tasks to earn exclusive rewards</p>
-        </div>
-
-        <div className="flex items-center gap-6">
-          <div className="text-right space-y-1">
-            <div className="text-sm text-gray-400">Tasks Completed</div>
-            <div className="text-2xl font-bold text-white">{completedTasks}/{totalTasks}</div>
+    <div className="w-full text-left p-0 m-0">
+      {/* Header */}
+      <div className="w-full text-left mb-4 mt-0 pt-0">
+        <h2 className="text-3xl font-bold text-white text-left mt-0 pt-0">
+          Campaign Tasks
+        </h2>
+        <p className="text-gray-400 text-left mt-2">Complete tasks to earn exclusive rewards</p>
+        
+        <div className="mt-4 w-full">
+          <div className="flex justify-between text-left text-sm text-gray-400 mb-2">
+            <span className="text-left">Campaign Progress</span>
+            <span>{completedTasks}/{totalTasks} Tasks</span>
           </div>
-          <div className="h-16 w-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-            <div className="text-xl font-bold text-white">{Math.round(completionPercentage)}%</div>
-          </div>
+          <Progress value={completionPercentage} className="w-full h-2 [&>[role=progressbar]]:bg-cyan-400 bg-[#1A2335]" />
         </div>
       </div>
 
-      {/* Tasks */}
-      <div className="grid grid-cols-1 gap-4">
-        {tasks.map((task, index) => (
-          <motion.div 
-            key={task.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.1 }}
-            className={cn(
-              "bg-white/5 rounded-xl p-6 border",
-              task.completed ? "border-white/10" : "border-white/10",
-              "transition-all duration-200 hover:bg-white/[0.07] group"
-            )}
-          >
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4 flex-1">
-                <div className="p-3 rounded-xl bg-white/5">
+      {/* Tasks - Horizontal scrollable layout */}
+      <div className="w-full overflow-x-auto pb-4">
+        <div className="flex space-x-4 min-w-full">
+          {tasks.map((task) => (
+            <div 
+              key={task.id}
+              className="min-w-[280px] bg-[#080A12] border border-[#1A2335]/50 rounded-md p-4 flex-shrink-0"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2.5 rounded-lg bg-[#1A2335]">
                   {getTaskIcon(task.type)}
                 </div>
-                <div className="space-y-1 flex-1">
-                  <h3 className="text-lg font-semibold text-white group-hover:text-white transition-colors">
+                <div className="text-left">
+                  <div className="font-medium text-white text-left">
                     {task.title}
-                  </h3>
-                  {task.completed && (
-                    <Badge variant="outline" className="bg-white/5 border-white/10 text-white">
-                      <Check className="h-4 w-4 mr-1" />
-                      Completed
-                    </Badge>
-                  )}
+                  </div>
                 </div>
               </div>
               
               <Button 
-                variant="outline"
                 size="sm"
-                className={cn(
-                  "min-w-[120px] transition-all duration-200",
-                  task.completed 
-                    ? "bg-white/5 hover:bg-white/10 text-white border-white/10" 
-                    : "bg-white/5 hover:bg-white/10 text-white border-white/10"
-                )}
+                className="bg-[#1A2335] hover:bg-[#243046] text-white border-0 rounded w-full mt-2"
                 onClick={() => handleTaskComplete(task.id)}
               >
                 {task.completed ? (
                   <>
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-4 w-4 mr-1.5" />
                     Completed
                   </>
                 ) : (
                   <>
                     Verify Task
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <ChevronRight className="h-4 w-4 ml-1.5" />
                   </>
                 )}
               </Button>
             </div>
-          </motion.div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Rewards */}
-      <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="space-y-6 flex-1">
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-white">Campaign Rewards</h3>
-              <div className="flex items-center gap-2 text-gray-400 text-sm">
-                <Info className="h-4 w-4" />
-                <span>NFTs will be claimable after campaign end</span>
+      {/* Rewards Section */}
+      <div className="mt-6 bg-[#080A12] border border-[#1A2335]/50 p-6 w-full text-left">
+        <h3 className="text-2xl font-bold text-white mb-2 text-left">Campaign Rewards</h3>
+        <div className="flex items-center gap-2 text-gray-400 text-sm mb-6 text-left">
+          <Info className="h-4 w-4" />
+          <span className="text-left">NFTs will be claimable after campaign end</span>
+        </div>
+        
+        <div className="flex flex-col md:flex-row justify-between gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div className="text-left">
+              <div className="flex items-center gap-2 mb-2 text-left">
+                <Trophy className="h-5 w-5 text-white" />
+                <span className="text-gray-400 text-left">XP Reward</span>
               </div>
+              <div className="text-2xl font-bold text-white text-left">10 XP</div>
             </div>
             
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-white" />
-                  <span className="text-gray-400">XP Reward</span>
-                </div>
-                <div className="text-3xl font-bold text-white">10 XP</div>
+            <div className="text-left">
+              <div className="flex items-center gap-2 mb-2 text-left">
+                <Gem className="h-5 w-5 text-white" />
+                <span className="text-gray-400 text-left">NEFT Reward</span>
               </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Gem className="h-5 w-5 text-white" />
-                  <span className="text-gray-400">NEFT Reward</span>
-                </div>
-                <div className="text-3xl font-bold text-white">10 NEFT</div>
-              </div>
+              <div className="text-2xl font-bold text-white text-left">10 NEFT</div>
             </div>
           </div>
           
-          <div className="flex items-center gap-6">
-            <Progress value={completionPercentage} className="w-40 h-2 [&>[role=progressbar]]:bg-white bg-white/5" />
-            <div className="min-w-[140px] text-right">
-              {completedTasks === totalTasks ? (
-                <span className="text-white font-medium flex items-center gap-2 justify-end">
-                  <Check className="h-5 w-5" />
-                  All Tasks Completed
-                </span>
-              ) : (
-                <span className="text-white font-medium">
-                  {completionPercentage}% Complete
-                </span>
+          <div className="mt-6 md:mt-0">
+            <Button 
+              className={cn(
+                "rounded-full px-5 font-medium",
+                completedTasks === totalTasks 
+                  ? "bg-cyan-400 hover:bg-cyan-500 text-black" 
+                  : "bg-[#1A2335] text-white"
               )}
-            </div>
+              disabled={completedTasks !== totalTasks}
+            >
+              {completedTasks === totalTasks ? (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  Claim Rewards
+                </>
+              ) : (
+                <>
+                  {completionPercentage}% Complete
+                </>
+              )}
+            </Button>
           </div>
         </div>
       </div>

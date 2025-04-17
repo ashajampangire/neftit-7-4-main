@@ -171,12 +171,12 @@ export default function EditProfile() {
   };
 
   return (
-    <Layout className="bg-background">
+    <Layout className="bg-background pt-0">
       <div className="fixed inset-0 z-0">
         <StarryBackground />
       </div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 pt-0 mt-0">
         <div className="container max-w-4xl mx-auto pt-0 mt-0 px-4">
           <div className="flex items-center justify-between mb-8 sticky top-[72px] z-10 py-4 -mx-4 px-4 backdrop-blur-sm transition-all duration-200">
             <div className="flex items-center gap-2">

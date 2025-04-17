@@ -107,7 +107,7 @@ const Profile = () => {
 
   return (
     <Layout className="bg-black">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 pt-0 mt-0 pb-8">
         {/* Profile Header */}
         <div className="mb-8">
           <div className="bg-black border border-white/10 rounded-xl overflow-hidden">
