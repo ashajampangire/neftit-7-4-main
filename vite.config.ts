@@ -2,12 +2,14 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
     port: 3333,
+
+    // 👇 Add this line to allow external host access
+    allowedHosts: ['y4gfpc-3333.csb.app'] // or 'all' to allow any host
   },
   resolve: {
     alias: {
@@ -15,7 +17,6 @@ export default defineConfig({
     },
   },
   css: {
-    // Ensure the font-reset.css is loaded first
     preprocessorOptions: {
       scss: {
         additionalData: `@import "./src/styles/font-reset.css";`
